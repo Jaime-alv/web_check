@@ -1,3 +1,4 @@
+#! python3
 # Copyright 2021 Jaime Álvarez Fernández
 import re
 import pathlib

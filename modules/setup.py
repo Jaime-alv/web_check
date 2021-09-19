@@ -1,3 +1,5 @@
+#! python3
+# Copyright 2021 Jaime Álvarez Fernández
 import pathlib
 import json
 import logging
