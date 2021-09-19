@@ -110,7 +110,7 @@ if __name__ == "__main__":
     if not pathlib.Path('storage\\url_list.txt').exists():
         logging.warning('No url_list.txt')
         pathlib.Path('storage\\url_list.txt').open('w')
-        url_list = []
+        url_list = {}
         json_url_dict = {'url': url_list}
         with pathlib.Path('storage\\url_list.txt').open('w') as f:
             json.dump(json_url_dict, f)
