@@ -1,4 +1,5 @@
 #! python3
+# Copyright 2021 Jaime Álvarez Fernández
 import pathlib
 import requests
 import webbrowser
@@ -7,6 +8,7 @@ import filecmp
 import sys
 import json
 import logging
+from modules import add_url
 
 try:
     logging.basicConfig(filename='storage\\logging\\log.txt', level=logging.DEBUG, format='%(levelname)s - %(message)s')
@@ -23,6 +25,7 @@ pathlib.Path('storage\\logging\\log.txt').open('w')
 def main(passed_argument):
     logging.debug(f'argument from sys {passed_argument}')
     if len(passed_argument) > 1:
+        # call add_url.py
         with pathlib.Path('storage\\url_list.txt').open('r') as file:
             add_url = json.load(file)
         for n in range(1, len(passed_argument)):
