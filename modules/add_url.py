@@ -25,26 +25,26 @@ def main(url, root):
     logging.critical(f'passed url: {url}')
     try:
         requests.get(url).raise_for_status()
+        with pathlib.Path(f'{root}\\url_list.txt').open('r') as f:
+            list_of_saved_url = json.load(f)
+        if list_of_saved_url['url'].get(url, None) is None:
+            response = requests.get(url)
+            name, header = domain_name(url)
+            if header is None:
+                name = name
+            else:
+                name = name + '_' + header
+            logging.warning(f'New file with name {name}.txt')
+            list_of_saved_url['url'].setdefault(url, name + '.txt')
+            with pathlib.Path(f'{root}\\url_list.txt').open('w') as f:
+                json.dump(list_of_saved_url, f)
+            save_to = pathlib.Path(f'{root}\\url_data\\{name}.txt').open('wb')
+            for chunk in response.iter_content(10000):
+                save_to.write(chunk)
+            logging.debug(f'Stored url in json file {list_of_saved_url}')
     except:
         logging.error(f"Something went wrong with {url}")
         print('Error!')
-    with pathlib.Path(f'{root}\\url_list.txt').open('r') as f:
-        list_of_saved_url = json.load(f)
-    if list_of_saved_url['url'].get(url, None) is None:
-        response = requests.get(url)
-        name, header = domain_name(url)
-        if header is None:
-            name = name
-        else:
-            name = name + '_' + header
-        logging.warning(f'New file with name {name}.txt')
-        list_of_saved_url['url'].setdefault(url, name + '.txt')
-        with pathlib.Path(f'{root}\\url_list.txt').open('w') as f:
-            json.dump(list_of_saved_url, f)
-        save_to = pathlib.Path(f'{root}\\url_data\\{name}.txt').open('wb')
-        for chunk in response.iter_content(10000):
-            save_to.write(chunk)
-        logging.debug(f'Stored url in json file {list_of_saved_url}')
 
 
 if __name__ == "__main__":

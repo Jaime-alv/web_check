@@ -24,8 +24,7 @@ def setup():
     if not pathlib.Path('..\\storage\\url_list.txt').exists():
         logging.warning('No url_list.txt')
         pathlib.Path('..\\storage\\url_list.txt').open('w')
-        url_list = {}
-        json_url_dict = {'url': url_list}
+        json_url_dict = {}
         with pathlib.Path('..\\storage\\url_list.txt').open('w') as f:
             json.dump(json_url_dict, f)
         logging.debug('text file for json created')
