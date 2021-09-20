@@ -24,9 +24,9 @@ def main():
             for each_url in list_of_saved_url:
                 file_name = list_of_saved_url[each_url]['file_name']
                 css_selector = list_of_saved_url[each_url]['css_selector']
-                logging.debug(f'url={each_url}')
-                logging.debug(f'file_name={file_name}')
-                logging.debug(f'selector={css_selector}')
+                logging.debug(f'url = {each_url}')
+                logging.debug(f'file_name = {file_name}')
+                logging.debug(f'selector = {css_selector}')
                 compare_url(each_url, file_name, css_selector)
     except FileNotFoundError:
         logging.error('Running setup.py')
@@ -38,7 +38,6 @@ def compare_url(url, file_name, css_selector):
     new_url = requests.get(url)
     path = f'storage\\url_data\\{file_name}.txt'
     if css_selector is not None:
-        logging.debug(f'unique css selector = {css_selector}')
         temp_file = pathlib.Path('storage\\temp.txt').open('w')
         bs4_object = bs4.BeautifulSoup(new_url.text, features="html.parser")
         parsed_element = bs4_object.select(css_selector)
@@ -81,9 +80,9 @@ if __name__ == "__main__":
     try:
         logging.basicConfig(filename='storage\\logging\\log.txt', level=logging.DEBUG,
                             format='%(levelname)s - %(message)s')
+        pathlib.Path('storage\\logging\\log.txt').open('w')
     except FileNotFoundError:
         setup.setup()
-    pathlib.Path('storage\\logging\\log.txt').open('w')
     logging.debug(pathlib.Path.cwd())
     logging.debug('main function')
     main()

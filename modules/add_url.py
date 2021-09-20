@@ -8,10 +8,6 @@ import logging
 import bs4
 
 
-# TODO: check if given url is valid or not
-# TODO: check if given url is already in json file
-# TODO: add url and path file to json
-# TODO: return to main.py
 def domain_name(url):
     name = re.compile(r'(http(s)?://)?(www\.)?(?P<domain>.*)\.(([a-zA-Z]+)(/((?P<header>(.*))[/.:]))?)')
     seek_name = name.search(url)
@@ -20,10 +16,11 @@ def domain_name(url):
 
 def main(url, css_selector, root):
     logging.critical(f'passed url: {url}')
-    try:
+    try:  # check if given url is valid or not
         requests.get(url).raise_for_status()
         with pathlib.Path(f'{root}\\url_list.txt').open('r') as f:
             list_of_saved_url = json.load(f)
+        # check if given url is already in json file
         if list_of_saved_url.get(url, None) is None:
             response = requests.get(url)
             domain, header = domain_name(url)
