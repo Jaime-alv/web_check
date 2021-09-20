@@ -12,9 +12,9 @@ import logging
 # TODO: add url and path file to json
 # TODO: return to main.py
 def domain_name(url):
-    name = re.compile(r'(http(s)?://)?(www\.)?(?P<name>.*)(\.(es|com))(/((?P<header>(.*))[/.:]))?')
+    name = re.compile(r'(http(s)?://)?(www\.)?(?P<domain>.*)(\.(es|com))(/((?P<header>(.*))[/.:]))?')
     seek_name = name.search(url)
-    return seek_name.group('name'), seek_name.group('header')
+    return seek_name.group('domain'), seek_name.group('header')
 
 
 # json = {'url': {'https://www.correos.com' : 'correos' }}
@@ -29,11 +29,11 @@ def main(url, root):
             list_of_saved_url = json.load(f)
         if list_of_saved_url['url'].get(url, None) is None:
             response = requests.get(url)
-            name, header = domain_name(url)
+            domain, header = domain_name(url)
             if header is None:
-                name = name
+                name = domain
             else:
-                name = name + '_' + header
+                name = domain + '_' + header
             logging.warning(f'New file with name {name}.txt')
             list_of_saved_url['url'].setdefault(url, name + '.txt')
             with pathlib.Path(f'{root}\\url_list.txt').open('w') as f:
