@@ -36,7 +36,7 @@ def main(url, css_selector, root):
             list_of_saved_url[url].setdefault('file_name', name)
 
             if css_selector is not None:
-                new_file = pathlib.Path(f'{root}\\url_data\\{name}.txt').open('w')
+                new_file = pathlib.Path(f'{root}\\url_data\\{name}.txt').open('w', encoding='utf-8')
                 list_of_saved_url[url].setdefault('css_selector', css_selector)
                 with pathlib.Path(f'{root}\\url_list.txt').open('w') as f:
                     json.dump(list_of_saved_url, f)

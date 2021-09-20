@@ -38,7 +38,7 @@ def compare_url(url, file_name, css_selector):
     new_url = requests.get(url)
     path = f'storage\\url_data\\{file_name}.txt'
     if css_selector is not None:
-        temp_file = pathlib.Path('storage\\temp.txt').open('w')
+        temp_file = pathlib.Path('storage\\temp.txt').open('w', encoding='utf-8')
         bs4_object = bs4.BeautifulSoup(new_url.text, features="html.parser")
         parsed_element = bs4_object.select(css_selector)
         temp_file.write(str(parsed_element[0].get_text()))
@@ -62,7 +62,7 @@ def save_url(url, path, css_selector):
     logging.warning(f'Updating file with {url} in {path}')
     if css_selector is not None:
         new_url = requests.get(url)
-        open_old_url = pathlib.Path(path).open('w')
+        open_old_url = pathlib.Path(path).open('w', encoding='utf-8')
         bs4_object = bs4.BeautifulSoup(new_url.text, features="html.parser")
         parsed_element = bs4_object.select(css_selector)
         open_old_url.write(str(parsed_element[0].get_text()))
