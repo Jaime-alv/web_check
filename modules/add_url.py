@@ -13,13 +13,9 @@ import bs4
 # TODO: add url and path file to json
 # TODO: return to main.py
 def domain_name(url):
-    name = re.compile(r'(http(s)?://)?(www\.)?(?P<domain>.*)(\.(es|com))(/((?P<header>(.*))[/.:]))?')
+    name = re.compile(r'(http(s)?://)?(www\.)?(?P<domain>.*)\.(([a-zA-Z]+)(/((?P<header>(.*))[/.:]))?)')
     seek_name = name.search(url)
     return seek_name.group('domain'), seek_name.group('header')
-
-
-# json = {'https://www.correos.com' : info }
-# info = {'css_selector' : 'whatever', 'filename' : 'correos.txt'}
 
 
 def main(url, css_selector, root):
@@ -31,28 +27,31 @@ def main(url, css_selector, root):
         if list_of_saved_url.get(url, None) is None:
             response = requests.get(url)
             domain, header = domain_name(url)
+
             if header is None:
                 name = domain
             else:
                 name = domain + '_' + header
-            logging.warning(f'New file with name {name}.txt')
-            info = {'css_selector': None, 'filename': ''}
-            list_of_saved_url.setdefault(url, info)
-            list_of_saved_url['filename'] = name + '.txt'
-            if css_selector is not None:
-                list_of_saved_url['css_selector'] = css_selector
-            with pathlib.Path(f'{root}\\url_list.txt').open('w') as f:
-                json.dump(list_of_saved_url, f)
-            if css_selector is None:
-                save_to = pathlib.Path(f'{root}\\url_data\\{name}.txt').open('wb')
-                for chunk in response.iter_content(10000):
-                    save_to.write(chunk)
-            else:
-                save_to = pathlib.Path(f'{root}\\url_data\\{name}.txt').open('w')
-                bs4_object = bs4.BeautifulSoup(response.text, features="html.parser")
-                element = bs4_object.select(css_selector)
-                save_to.write(element[0].text)
 
+            logging.warning(f'New file with name {name}.txt')
+            additional_info = {}
+            list_of_saved_url.setdefault(url, additional_info)
+            list_of_saved_url[url].setdefault('file_name', name)
+
+            if css_selector is not None:
+                new_file = pathlib.Path(f'{root}\\url_data\\{name}.txt').open('w')
+                list_of_saved_url[url].setdefault('css_selector', css_selector)
+                with pathlib.Path(f'{root}\\url_list.txt').open('w') as f:
+                    json.dump(list_of_saved_url, f)
+                bs4_object = bs4.BeautifulSoup(response.text, features="html.parser")
+                parsed_element = bs4_object.select(css_selector)
+                new_file.write(str(parsed_element[0].get_text()))
+
+            elif css_selector is None:
+                new_file = pathlib.Path(f'{root}\\url_data\\{name}.txt').open('wb')
+                list_of_saved_url[url].setdefault('css_selector', None)
+                for chunk in response.iter_content(10000):
+                    new_file.write(chunk)
             logging.debug(f'Stored url in json file {list_of_saved_url}')
     except:
         logging.error(f"Something went wrong with {url}")
@@ -63,9 +62,11 @@ if __name__ == "__main__":
     logging.basicConfig(filename='..\\storage\\logging\\log.txt', level=logging.DEBUG,
                         format='%(levelname)s - %(message)s')
     # add url manually
-    print('Add desired url\nurl needs to start with http:// or https://\n')
+    print(
+        'Add desired url, followed by a whitespace, followed by the unique css selector.\nurl needs to start with http:// or https://\n')
     answer_url = input('@: ')
-    if len(answer_url.split(' ', 2)) == 2:
-        main(answer_url.split(' ')[0], answer_url.split(' ')[1], '..\\storage')
-    elif len(answer_url.split(' ')) == 1:
-        main(answer_url.split(' ')[0], None, '..\\storage')
+    clean_answer = answer_url.split(' ', maxsplit=1)
+    if len(clean_answer) == 2:
+        main(clean_answer[0], clean_answer[1], '..\\storage')
+    elif len(clean_answer) == 1:
+        main(answer_url, None, '..\\storage')
