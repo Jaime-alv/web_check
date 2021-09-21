@@ -24,9 +24,9 @@ def main():
             for each_url in list_of_saved_url:
                 file_name = list_of_saved_url[each_url]['file_name']
                 css_selector = list_of_saved_url[each_url]['css_selector']
-                logging.debug(f'url = {each_url}')
-                logging.debug(f'file_name = {file_name}')
-                logging.debug(f'selector = {css_selector}')
+                logging.info(f'url = {each_url}')
+                logging.info(f'file_name = {file_name}')
+                logging.info(f'selector = {css_selector}')
                 compare_url(each_url, file_name, css_selector)
     except FileNotFoundError:
         logging.error('Running setup.py')
