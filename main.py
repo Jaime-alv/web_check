@@ -1,4 +1,4 @@
-#! python3
+#!"..\..\Automate the boring stuff\venv\Scripts\python.exe"
 # Copyright 2021 Jaime Álvarez Fernández
 import pathlib
 import bs4
@@ -8,7 +8,7 @@ import filecmp
 import sys
 import json
 import logging
-from modules import add_url
+from modules.add_url import NewUrl
 from modules import setup
 
 
@@ -17,28 +17,29 @@ def main():
     if len(passed_argument) > 1:
         logging.debug(f'argument from sys {passed_argument}')
         for n in range(1, len(passed_argument)):
-            add_url.main(passed_argument[n], None, 'storage')
+            NewUrl(passed_argument[n], None, 'storage')
     try:
         with pathlib.Path('storage\\url_list.txt').open('r') as file:
             list_of_saved_url = json.load(file)
             for each_url in list_of_saved_url:
                 file_name = list_of_saved_url[each_url]['file_name']
                 css_selector = list_of_saved_url[each_url]['css_selector']
+                charset = list_of_saved_url[each_url]['encoding']
                 logging.info(f'url = {each_url}')
                 logging.info(f'file_name = {file_name}')
                 logging.info(f'selector = {css_selector}')
-                compare_url(each_url, file_name, css_selector)
+                compare_url(each_url, file_name, css_selector, charset)
     except FileNotFoundError:
         logging.error('Running setup.py')
         setup.setup()
 
 
 # compare to a saved version
-def compare_url(url, file_name, css_selector):
+def compare_url(url, file_name, css_selector, charset):
     new_url = requests.get(url)
     path = f'storage\\url_data\\{file_name}.txt'
     if css_selector is not None:
-        temp_file = pathlib.Path('storage\\temp.txt').open('w', encoding='utf-8')
+        temp_file = pathlib.Path('storage\\temp.txt').open('w', encoding=charset)
         bs4_object = bs4.BeautifulSoup(new_url.text, features="html.parser")
         parsed_element = bs4_object.select(css_selector)
         temp_file.write(str(parsed_element[0].get_text()))
@@ -54,15 +55,15 @@ def compare_url(url, file_name, css_selector):
     elif not compare_files:
         logging.critical(f'Opening {url}. Differences found.')
         webbrowser.open(url)
-        save_url(url, path, css_selector)
+        save_url(url, path, css_selector, charset)
 
 
 # update the saved version
-def save_url(url, path, css_selector):
+def save_url(url, path, css_selector, charset):
     logging.warning(f'Updating file with {url} in {path}')
     if css_selector is not None:
         new_url = requests.get(url)
-        open_old_url = pathlib.Path(path).open('w', encoding='utf-8')
+        open_old_url = pathlib.Path(path).open('w', encoding=charset)
         bs4_object = bs4.BeautifulSoup(new_url.text, features="html.parser")
         parsed_element = bs4_object.select(css_selector)
         open_old_url.write(str(parsed_element[0].get_text()))
@@ -85,4 +86,5 @@ if __name__ == "__main__":
         setup.setup()
     logging.debug(pathlib.Path.cwd())
     logging.debug('main function')
+    print('Running...')
     main()

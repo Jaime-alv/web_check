@@ -1,4 +1,4 @@
-#! python3
+#!"..\..\..\Automate the boring stuff\venv\Scripts\python.exe"
 # Copyright 2021 Jaime Álvarez Fernández
 import json
 import pathlib

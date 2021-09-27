@@ -7,3 +7,6 @@ test_list.txt
 
 # python cache
 __pycache__/
+
+# other files
+social_preview.jpg
