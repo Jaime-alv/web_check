@@ -13,6 +13,65 @@ from modules import setup
 import shutil
 
 
+class CompareUrl:
+    def __init__(self):
+        print('Running...')
+        self.file_name, self.css_selector, self.charset, self.url = self.main()
+        self.compare_url()
+
+    def main(self):
+        with pathlib.Path('storage\\url_list.txt').open('r') as file:
+            list_of_saved_url = json.load(file)
+            for each_url in list_of_saved_url:
+                file_name = list_of_saved_url[each_url]['file_name']
+                css_selector = list_of_saved_url[each_url]['css_selector']
+                charset = list_of_saved_url[each_url]['encoding']
+                logging.info(f'url = {each_url}')
+                logging.info(f'file_name = {file_name}')
+                logging.info(f'selector = {css_selector}')
+                return file_name, css_selector, charset, each_url
+
+    def compare_url(self):
+        new_url = requests.get(self.url)
+        path = f'storage\\url_data\\{self.file_name}.txt'
+        if self.css_selector is not None:
+            temp_file = pathlib.Path('storage\\temp.txt').open('w', encoding=self.charset)
+            bs4_object = bs4.BeautifulSoup(new_url.text, features="html.parser")
+            parsed_element = bs4_object.select(self.css_selector)
+            temp_file.write(str(parsed_element[0].get_text()))
+            temp_file.close()
+        elif self.css_selector is None:
+            temp_file = pathlib.Path('storage\\temp.txt').open('wb')
+            for chunk in new_url.iter_content(10000):
+                temp_file.write(chunk)
+                temp_file.close()
+        compare_files = filecmp.cmp('storage\\temp.txt', path, shallow=False)
+        if compare_files:
+            logging.warning(f"{self.url} Equal to stored one")
+        elif not compare_files:
+            logging.critical(f'Opening {self.url}. Differences found.')
+            webbrowser.open(self.url)
+            self.save_url(path)
+
+    def save_url(self, path):
+        logging.warning(f'Updating file with {self.url} in {path}')
+        shutil.move(path, f'storage\\url_data\\backup\\{self.file_name}_backup.txt')
+        if self.css_selector is not None:
+            new_url = requests.get(self.url)
+            open_old_url = pathlib.Path(path).open('w', encoding=self.charset)
+            bs4_object = bs4.BeautifulSoup(new_url.text, features="html.parser")
+            parsed_element = bs4_object.select(self.css_selector)
+            open_old_url.write(str(parsed_element[0].get_text()))
+            open_old_url.close()
+
+        elif self.css_selector is None:
+            open_url = pathlib.Path(path).open('wb')
+            new_content_for_url = requests.get(self.url)
+            for chunk in new_content_for_url.iter_content(10000):
+                open_url.write(chunk)
+            open_url.close()
+
+
 def main():
     passed_argument = sys.argv
     if len(passed_argument) > 1:
@@ -88,5 +147,4 @@ if __name__ == "__main__":
         setup.setup()
     logging.debug(pathlib.Path.cwd())
     logging.debug('main function')
-    print('Running...')
-    main()
+    CompareUrl()
