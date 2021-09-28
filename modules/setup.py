@@ -7,18 +7,19 @@ import logging
 
 def setup():
     try:
-        logging.basicConfig(filename='storage\\logging\\log.txt', level=logging.DEBUG,
+        logging.basicConfig(filename='storage\\logs\\log.txt', level=logging.DEBUG,
                             format='%(levelname)s - %(message)s')
     except FileNotFoundError:
-        if not pathlib.Path('..\\storage\\logging\\log.txt').exists():
-            pathlib.Path('..\\storage\\logging').mkdir(parents=True, exist_ok=True)
-            new_log = pathlib.Path('..\\storage\\logging\\log.txt').open('w')
+        if not pathlib.Path('..\\storage\\logs\\log.txt').exists():
+            pathlib.Path('..\\storage\\logs').mkdir(parents=True, exist_ok=True)
+            new_log = pathlib.Path('..\\storage\\logs\\log.txt').open('w')
             new_log.close()
             logging.warning('Log directory created')
 
         if not pathlib.Path('..\\storage\\url_data').exists():
             logging.error('No directory found')
             pathlib.Path('..\\storage\\url_data').mkdir(parents=True, exist_ok=True)
+            pathlib.Path('..\\storage\\url_data\\backup').mkdir(parents=True, exist_ok=True)
             logging.debug('directory created')
 
         if not pathlib.Path('..\\storage\\url_list.txt').exists():
