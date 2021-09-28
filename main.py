@@ -62,7 +62,7 @@ def compare_url(url, file_name, css_selector, charset):
 # update the saved version
 def save_url(url, path, css_selector, charset, file_name):
     logging.warning(f'Updating file with {url} in {path}')
-    shutil.move(path, f'storage\\url_data\\backup\\{file_name}.backup')
+    shutil.move(path, f'storage\\url_data\\backup\\{file_name}_backup.txt')
     if css_selector is not None:
         new_url = requests.get(url)
         open_old_url = pathlib.Path(path).open('w', encoding=charset)
