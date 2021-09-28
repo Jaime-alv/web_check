@@ -2,33 +2,27 @@
 # Copyright 2021 Jaime Álvarez Fernández
 import re
 import pathlib
+import sys
 import requests
 import json
 import logging
 import bs4
 
 
-def get_charset(charset):
-    charset_pattern = re.compile(r'charset=(?P<charset>.*)')
-    search_charset = charset_pattern.search(charset)
-    return search_charset.group('charset')
-
-
 class NewUrl:
-    def __init__(self, url, css_selector, root):
+    def __init__(self, root, list_of_saved_url, url, css_selector):
+        self.root = root
+        self.list_of_saved_url = list_of_saved_url
         self.url = url
         self.css_selector = css_selector
-        self.root = root
         self.main()
 
     def main(self):
         logging.critical(f'passed url: {self.url}')
         try:  # check if given url is valid or not
             requests.get(self.url).raise_for_status()
-            with pathlib.Path(f'{self.root}\\url_list.txt').open('r') as f:
-                list_of_saved_url = json.load(f)
             # check if given url is already in json file
-            if list_of_saved_url.get(self.url, None) is None:
+            if self.list_of_saved_url.get(self.url, None) is None:
                 response = requests.get(self.url)
                 pass_charset = response.headers['Content-Type']
                 domain, header = self.domain_name()
@@ -41,29 +35,31 @@ class NewUrl:
 
                 logging.warning(f'New file with name {name}.txt')
                 additional_info = {}
-                list_of_saved_url.setdefault(self.url, additional_info)
-                list_of_saved_url[self.url].setdefault('file_name', name)
-                list_of_saved_url[self.url].setdefault('encoding', enc_charset)
+                self.list_of_saved_url.setdefault(self.url, additional_info)
+                self.list_of_saved_url[self.url].setdefault('file_name', name)
+                self.list_of_saved_url[self.url].setdefault('encoding', enc_charset)
                 logging.info(f"{name} with encoding {enc_charset}")
 
                 if self.css_selector is not None:
                     new_file = pathlib.Path(f'{self.root}\\url_data\\{name}.txt').open('w', encoding=enc_charset)
-                    list_of_saved_url[self.url].setdefault('css_selector', self.css_selector)
+                    self.list_of_saved_url[self.url].setdefault('css_selector', self.css_selector)
                     with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as f:
-                        json.dump(list_of_saved_url, f)
+                        json.dump(self.list_of_saved_url, f)
                     bs4_object = bs4.BeautifulSoup(response.text, features="html.parser")
                     parsed_element = bs4_object.select(self.css_selector)
                     new_file.write(str(parsed_element[0].get_text()))
 
                 elif self.css_selector is None:
                     new_file = pathlib.Path(f'{self.root}\\url_data\\{name}.txt').open('wb')
-                    list_of_saved_url[self.url].setdefault('css_selector', None)
+                    self.list_of_saved_url[self.url].setdefault('css_selector', None)
                     for chunk in response.iter_content(10000):
                         new_file.write(chunk)
-                logging.debug(f'Stored url in json file {list_of_saved_url}')
+                logging.debug(f'Stored url in json file {self.list_of_saved_url}')
                 print(f"Everything ok with {name}")
-        except:
+        except Exception:
             logging.error(f"Something went wrong with {self.url}")
+            response = requests.get(self.url)
+            logging.error(f"Response from request = {response}")
             print('Error!')
 
     def domain_name(self):
@@ -72,15 +68,111 @@ class NewUrl:
         return seek_name.group('domain'), seek_name.group('header')
 
 
+def get_charset(charset):
+    charset_pattern = re.compile(r'charset=(?P<charset>.*)')
+    search_charset = charset_pattern.search(charset)
+    return search_charset.group('charset')
+
+
+class DeleteUrl:
+    def __init__(self, root, list_of_saved_url):
+        self.root = root
+        self.list_of_saved_url = list_of_saved_url
+        if len(self.list_of_saved_url) > 0:
+            self.delete_stored_url()
+        else:
+            print('List is empty!')
+
+    def delete_stored_url(self):
+        order = sorted(self.list_of_saved_url)
+        index = 1
+        print('00. Delete all')
+        for http in order:
+            print(f"{index:02}. {http}")
+            index += 1
+        print('Which url do you want to delete?')
+        while True:
+            url_number = input('#: ')
+            if url_number.isdigit() and 0 < int(url_number) <= (index - 1):
+                pathing = self.list_of_saved_url[order[(int(url_number) - 1)]]['file_name']
+                file = pathlib.Path(f'{self.root}\\url_data\\{pathing}.txt')
+                backup_file = pathlib.Path(f'{self.root}\\url_data\\backup\\{pathing}.txt')
+                pathlib.Path.unlink(file)
+                pathlib.Path.unlink(backup_file)
+                del self.list_of_saved_url[order[(int(url_number) - 1)]]
+                with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as overwrite:
+                    json.dump(self.list_of_saved_url, overwrite)
+                break
+            elif url_number.isdigit() and int(url_number) == 0:
+                url_data = pathlib.Path(f'{self.root}\\url_data')
+                for file in url_data.iterdir():
+                    if file.is_file():
+                        pathlib.Path.unlink(file)
+                for file in pathlib.Path(f"{self.root}\\url_data\\backup").iterdir():
+                    if file.is_file():
+                        pathlib.Path.unlink(file)
+                clean_dict = {}
+                with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as overwrite:
+                    json.dump(clean_dict, overwrite)
+                break
+            elif url_number.lower() == 'exit':
+                sys.exit()
+            else:
+                print('Error! Enter a valid input.')
+
+
+class ModifyCss:
+    def __init__(self, root, list_of_saved_url):
+        self.root = root
+        self.list_of_saved_url = list_of_saved_url
+        self.modify()
+
+    def modify(self):
+        order = sorted(self.list_of_saved_url)
+        index = 1
+        for url in order:
+            print(f"{index:02}. {url}")
+            index += 1
+        print('Which url do you want to modify its css selector?')
+        while True:
+            url_number = input('#: ')
+            if url_number.isdigit() and 0 < int(url_number) < index:
+                print('Fill in new css selector.')
+                new_css = input('@: ')
+                switched_url = self.list_of_saved_url[order[(int(url_number) - 1)]]
+                logging.warning(f"New css selector for {switched_url['file_name']}")
+                logging.info(f"old: {switched_url['css_selector']}, new: {new_css}")
+                switched_url['css_selector'] = new_css
+                with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as overwrite:
+                    json.dump(self.list_of_saved_url, overwrite)
+                break
+            elif url_number.lower() == 'exit':
+                sys.exit()
+            else:
+                print('Error! Enter a valid input.')
+
+
 if __name__ == "__main__":
-    logging.basicConfig(filename='..\\storage\\logging\\log.txt', level=logging.DEBUG,
+    logging.basicConfig(filename='..\\storage\\logs\\log.txt', level=logging.DEBUG,
                         format='%(levelname)s - %(message)s')
-    # add url manually
-    print(
-        'Add desired url, followed by a whitespace, followed by the unique css selector.\nurl needs to start with http:// or https://\n')
-    answer_url = input('@: ')
-    clean_answer = answer_url.split(' ', maxsplit=1)
-    if len(clean_answer) == 2:
-        NewUrl(clean_answer[0], clean_answer[1], '..\\storage')
-    elif len(clean_answer) == 1:
-        NewUrl(answer_url, None, '..\\storage')
+    with pathlib.Path(f'..\\storage\\url_list.txt').open('r') as json_file:
+        stored_url = json.load(json_file)
+    print("""
+1. Add url
+2. Modify url
+3. Delete url
+    """)
+    answer = input('#: ')
+    if answer == '1':
+        print('Add desired url, followed by a whitespace, followed by the unique css selector.')
+        print('url needs to start with http:// or https://\n')
+        answer_url = input('@: ')
+        clean_answer = answer_url.split(' ', maxsplit=1)
+        if len(clean_answer) == 2:
+            NewUrl('..\\storage', stored_url, clean_answer[0], clean_answer[1])
+        elif len(clean_answer) == 1:
+            NewUrl('..\\storage', stored_url, answer_url, None)
+    elif answer == '2':
+        ModifyCss('..\\storage', stored_url)
+    elif answer == '3':
+        DeleteUrl('..\\storage', stored_url)

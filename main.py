@@ -10,6 +10,7 @@ import json
 import logging
 from modules.add_url import NewUrl
 from modules import setup
+import shutil
 
 
 def main():
@@ -55,12 +56,13 @@ def compare_url(url, file_name, css_selector, charset):
     elif not compare_files:
         logging.critical(f'Opening {url}. Differences found.')
         webbrowser.open(url)
-        save_url(url, path, css_selector, charset)
+        save_url(url, path, css_selector, charset, file_name)
 
 
 # update the saved version
-def save_url(url, path, css_selector, charset):
+def save_url(url, path, css_selector, charset, file_name):
     logging.warning(f'Updating file with {url} in {path}')
+    shutil.move(path, f'storage\\url_data\\backup\\{file_name}_backup.txt')
     if css_selector is not None:
         new_url = requests.get(url)
         open_old_url = pathlib.Path(path).open('w', encoding=charset)
@@ -79,9 +81,9 @@ def save_url(url, path, css_selector, charset):
 
 if __name__ == "__main__":
     try:
-        logging.basicConfig(filename='storage\\logging\\log.txt', level=logging.DEBUG,
+        logging.basicConfig(filename='storage\\logs\\log.txt', level=logging.DEBUG,
                             format='%(levelname)s - %(message)s')
-        pathlib.Path('storage\\logging\\log.txt').open('w')
+        pathlib.Path('storage\\logs\\log.txt').open('w')
     except FileNotFoundError:
         setup.setup()
     logging.debug(pathlib.Path.cwd())
