@@ -166,7 +166,7 @@ if __name__ == "__main__":
         with pathlib.Path(f'..\\storage\\url_list.txt').open('r') as json_file:
             stored_url = json.load(json_file)
     except FileNotFoundError:
-        print('There is an error with folders, run setup.py')
+        print('There is an error with some files, run setup.py')
     print("""
 1. Add url
 2. Modify url
