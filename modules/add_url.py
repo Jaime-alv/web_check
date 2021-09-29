@@ -10,11 +10,18 @@ import bs4
 
 
 class NewUrl:
-    def __init__(self, root, list_of_saved_url, url, css_selector):
+    def __init__(self, root, list_of_saved_url):
         self.root = root
         self.list_of_saved_url = list_of_saved_url
-        self.url = url
-        self.css_selector = css_selector
+        print('Add desired url.')
+        print('Url needs to start with http:// or https://')
+        self.url = input('@: ')
+        print('Add unique css selector.')
+        css = input('css: ')
+        if css != '':
+            self.css_selector = css
+        else:
+            self.css_selector = None
         self.main()
 
     def main(self):
@@ -153,10 +160,13 @@ class ModifyCss:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='..\\storage\\logs\\log.txt', level=logging.DEBUG,
-                        format='%(levelname)s - %(message)s')
-    with pathlib.Path(f'..\\storage\\url_list.txt').open('r') as json_file:
-        stored_url = json.load(json_file)
+    try:
+        logging.basicConfig(filename='..\\storage\\logs\\log.txt', level=logging.DEBUG,
+                            format='%(levelname)s - %(message)s')
+        with pathlib.Path(f'..\\storage\\url_list.txt').open('r') as json_file:
+            stored_url = json.load(json_file)
+    except FileNotFoundError:
+        print('There is an error with some files, run setup.py')
     print("""
 1. Add url
 2. Modify url
@@ -164,14 +174,7 @@ if __name__ == "__main__":
     """)
     answer = input('#: ')
     if answer == '1':
-        print('Add desired url, followed by a whitespace, followed by the unique css selector.')
-        print('url needs to start with http:// or https://\n')
-        answer_url = input('@: ')
-        clean_answer = answer_url.split(' ', maxsplit=1)
-        if len(clean_answer) == 2:
-            NewUrl('..\\storage', stored_url, clean_answer[0], clean_answer[1])
-        elif len(clean_answer) == 1:
-            NewUrl('..\\storage', stored_url, answer_url, None)
+        NewUrl('..\\storage', stored_url)
     elif answer == '2':
         ModifyCss('..\\storage', stored_url)
     elif answer == '3':
