@@ -57,12 +57,11 @@ class NewUrl:
                 for chunk in response.iter_content(10000):
                     new_file.write(chunk)
             logging.debug(f'Stored url in json file {self.list_of_saved_url}')
-            print(f"Everything ok with {name}")
+            logging.info(f"Everything ok with {name}")
         except Exception:
             logging.error(f"Something went wrong with {self.url}")
             response = requests.get(self.url)
             logging.error(f"Response from request = {response}")
-            print('Error!')
 
     def domain_name(self):
         name = re.compile(r'(http(s)?://)?(www\.)?(?P<domain>.*)\.([a-zA-Z]+)(/(?P<header>[a-zA-Z_\-]+)(/.*)?)?')
@@ -74,6 +73,26 @@ def get_charset(charset):
     charset_pattern = re.compile(r'charset=(?P<charset>.*)')
     search_charset = charset_pattern.search(charset)
     return search_charset.group('charset')
+
+
+class ModifyCssGUI:
+    def __init__(self, root, list_of_saved_url, url, modify_css):
+        self.root = root
+        self.list_of_saved_url = list_of_saved_url
+        self.url = url
+        self.modify_css = modify_css
+        logging.basicConfig(filename=f'{self.root}\\logs\\log.txt', level=logging.DEBUG,
+                            format='%(levelname)s - %(message)s')
+
+        if self.modify_css != '':
+            self.modified_css = self.modify_css
+        else:
+            self.modified_css = None
+        logging.warning(f"New css selector for {self.list_of_saved_url[url]['file_name']}")
+        logging.info(f"old: {self.list_of_saved_url[url]['css_selector']}, new: {self.modify_css}")
+        self.list_of_saved_url[url]['css_selector'] = self.modified_css
+        with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as overwrite:
+            json.dump(self.list_of_saved_url, overwrite)
 
 
 class DeleteUrl:
