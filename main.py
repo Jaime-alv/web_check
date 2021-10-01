@@ -7,7 +7,6 @@ import webbrowser
 import filecmp
 import json
 import logging
-from modules.add_url import NewUrl
 from modules import setup
 import shutil
 
@@ -80,7 +79,6 @@ if __name__ == "__main__":
             list_of_saved_url = json.load(file)
         if len(list_of_saved_url) == 0:
             print('List is empty')
-            NewUrl(directory, list_of_saved_url)
         else:
             logging.debug(pathlib.Path.cwd())
             logging.debug('main function')
