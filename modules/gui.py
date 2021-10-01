@@ -14,7 +14,7 @@ class WebCheckGUI(tkinter.Frame):
         with pathlib.Path(f'{self.root}\\url_list.txt').open('r') as file:
             self.list_of_saved_url = json.load(file)
         self.master = master
-        self.master.geometry('300x300')
+        self.master.geometry('500x300')
         self.pack(expand=1, fill='both')
         self.master.title('web check')
         self.label = tkinter.Label(self)
@@ -37,6 +37,7 @@ class WebCheckGUI(tkinter.Frame):
         tab_control.pack(expand=1, fill='both')
         self.home()
         self.add_url()
+        self.modify_url()
 
     def terminate(self):
         close_program = tkinter.Button(self, fg='red', command=self.master.destroy)
@@ -92,7 +93,26 @@ class WebCheckGUI(tkinter.Frame):
         elif not url.startswith(r'http'):
             messagebox.showerror('Error!', 'Incorrect format.\nUrl needs to start with http:// or https://')
         else:
-            messagebox.showinfo('Duplicate', f'{url}\nAlready stored in url_list.txt')
+            messagebox.showwarning('Duplicate', f'{url}\nAlready stored in url_list.txt')
+
+    def modify_url(self):
+        label_modify_css = tkinter.Label(self.tab_modify_url, text='Introduce new css:')
+        label_modify_css.pack(side='top', anchor='w')
+        self.modify_css = tkinter.StringVar()
+        entry_css = tkinter.Entry(self.tab_modify_url)
+        entry_css.pack(side='top', fill=tkinter.X)
+        label_modify_css = tkinter.Label(self.tab_modify_url, text='Click url to modify:')
+        label_modify_css.pack(side='top', anchor='w')
+        self.button = []
+        order = sorted(self.list_of_saved_url)
+        for i in range(len(order)):
+            self.button.append(tkinter.Button(self.tab_modify_url, text=order[i], command=lambda i=i: self.open_this(order[i])))
+            self.button[i].pack(anchor='w', fill=tkinter.X)
+
+
+    def open_this(self, myNum):
+        print(myNum)
+
 
     def create_menu(self):
         menu = tkinter.Menu(self.master)
