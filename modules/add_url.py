@@ -10,18 +10,11 @@ import bs4
 
 
 class NewUrl:
-    def __init__(self, root, list_of_saved_url):
+    def __init__(self, root, list_of_saved_url, add_url, add_css):
+        self.url = add_url
+        self.css_selector = add_css
         self.root = root
         self.list_of_saved_url = list_of_saved_url
-        print('Add desired url.')
-        print('Url needs to start with http:// or https://')
-        self.url = input('@: ')
-        print('Add unique css selector.')
-        css = input('css: ')
-        if css != '':
-            self.css_selector = css
-        else:
-            self.css_selector = None
         self.main()
 
     def main(self):
@@ -174,7 +167,16 @@ if __name__ == "__main__":
     """)
     answer = input('#: ')
     if answer == '1':
-        NewUrl('..\\storage', stored_url)
+        print('Add desired url.')
+        print('Url needs to start with http:// or https://')
+        new_url = input('@: ')
+        print('Add unique css selector.')
+        new_css = input('css: ')
+        if new_css != '':
+            css_selector = new_css
+        else:
+            css_selector = None
+        NewUrl('..\\storage', stored_url, new_url, css_selector)
     elif answer == '2':
         ModifyCss('..\\storage', stored_url)
     elif answer == '3':
