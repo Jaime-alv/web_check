@@ -2,6 +2,7 @@ import tkinter
 from tkinter import ttk
 from tkinter import messagebox
 from main import CompareUrl
+from add_url import *
 import json
 import pathlib
 
@@ -38,11 +39,11 @@ class WebCheckGUI(tkinter.Frame):
         self.add_url()
 
     def terminate(self):
-        self.close_program = tkinter.Button(self, fg='red', command=self.master.destroy)
-        self.close_program['text'] = 'Close program'
-        self.close_program['padx'] = 5
-        self.close_program['pady'] = 5
-        self.close_program.pack(side='bottom')
+        close_program = tkinter.Button(self, fg='red', command=self.master.destroy)
+        close_program['text'] = 'Close program'
+        close_program['padx'] = 5
+        close_program['pady'] = 5
+        close_program.pack(side='bottom')
 
     def home(self):
         button_run_script = tkinter.Button(self.tab_home, text='Run')
@@ -62,14 +63,36 @@ class WebCheckGUI(tkinter.Frame):
             messagebox.showerror('Error!', 'List is empty!')
 
     def add_url(self):
+        self.new_url_string = tkinter.StringVar()
+        self.new_url_css = tkinter.StringVar()
         label_add_url = tkinter.Label(self.tab_add_url, text='Add new url: ')
-        label_add_url.grid(column=0, row=0)
-        self.entry_url = tkinter.Entry(self.tab_add_url)
-        self.entry_url.grid(column=1, row=0, rowspan=1)
+        label_add_url.pack(anchor='w')
+        entry_url = tkinter.Entry(self.tab_add_url)
+        entry_url.pack(fill=tkinter.X)
+        entry_url["textvariable"] = self.new_url_string
         label_add_css = tkinter.Label(self.tab_add_url, text='Add unique css: ')
-        label_add_css.grid(column=0, row=1)
-        self.entry_css = tkinter.Entry(self.tab_add_url)
-        self.entry_css.grid(column=1, row=1, rowspan=1)
+        label_add_css.pack(anchor='w')
+        entry_css = tkinter.Entry(self.tab_add_url)
+        entry_css.pack(fill=tkinter.X)
+        entry_css['textvariable'] = self.new_url_css
+        submit_button = tkinter.Button(self.tab_add_url, text='Submit new url')
+        submit_button.pack(anchor='center', expand=1, ipadx=20, ipady=5)
+        submit_button['command'] = self.add_new_url
+
+    def add_new_url(self):
+        url = self.new_url_string.get()
+        if self.new_url_css.get() != '':
+            unique_css = self.new_url_css.get()
+        else:
+            unique_css = None
+        if url.startswith(r'http') and self.list_of_saved_url.get(url, None) is None:
+            add = NewUrl(self.root, self.list_of_saved_url, url, unique_css)
+            if add:
+                messagebox.showinfo(f'Done', f'New url successfully added:\n{url}')
+        elif not url.startswith(r'http'):
+            messagebox.showerror('Error!', 'Incorrect format.\nUrl needs to start with http:// or https://')
+        else:
+            messagebox.showinfo('Duplicate', f'{url}\nAlready stored in url_list.txt')
 
     def create_menu(self):
         menu = tkinter.Menu(self.master)
