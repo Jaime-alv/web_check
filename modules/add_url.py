@@ -95,6 +95,24 @@ class ModifyCssGUI:
             json.dump(self.list_of_saved_url, overwrite)
 
 
+class DeleteUrlGUI:
+    def __init__(self, root, list_of_saved_url, for_delete):
+        self.root = root
+        self.list_of_saved_url = list_of_saved_url
+        self.for_delete = for_delete
+        for element in for_delete:
+            file_name = list_of_saved_url[element]['file_name']
+            file = pathlib.Path(f'{self.root}\\url_data\\{file_name}.txt')
+            backup_file = pathlib.Path(f'{self.root}\\url_data\\backup\\{file_name}_backup.txt')
+            if file.exists():
+                pathlib.Path.unlink(file)
+            if backup_file.exists():
+                pathlib.Path.unlink(backup_file)
+            del self.list_of_saved_url[element]
+        with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as overwrite:
+            json.dump(self.list_of_saved_url, overwrite)
+
+
 class DeleteUrl:
     def __init__(self, root, list_of_saved_url):
         self.root = root
@@ -117,7 +135,7 @@ class DeleteUrl:
             if url_number.isdigit() and 0 < int(url_number) <= (index - 1):
                 pathing = self.list_of_saved_url[order[(int(url_number) - 1)]]['file_name']
                 file = pathlib.Path(f'{self.root}\\url_data\\{pathing}.txt')
-                backup_file = pathlib.Path(f'{self.root}\\url_data\\backup\\{pathing}.txt')
+                backup_file = pathlib.Path(f'{self.root}\\url_data\\backup\\{pathing}_backup.txt')
                 if file.exists():
                     pathlib.Path.unlink(file)
                 if backup_file.exists():
