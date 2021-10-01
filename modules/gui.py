@@ -1,12 +1,17 @@
 import tkinter
 from tkinter import ttk
 from tkinter import messagebox
-from main import Main
+from main import CompareUrl
+import json
+import pathlib
 
 
 class WebCheckGUI(tkinter.Frame):
-    def __init__(self, master):
+    def __init__(self, master, root):
         super().__init__(master)
+        self.root = root
+        with pathlib.Path(f'{self.root}\\url_list.txt').open('r') as file:
+            self.list_of_saved_url = json.load(file)
         self.master = master
         self.master.geometry('300x300')
         self.pack(expand=1, fill='both')
@@ -48,12 +53,13 @@ class WebCheckGUI(tkinter.Frame):
         label_github['text'] = 'https://github.com/Jaime-alv/web_check.git'
         label_github.pack(side='bottom')
 
-    def run_script(self):  
-        label_running = tkinter.Label(self.tab_home, text='Running...')
-        label_running.pack(side='bottom')
-        result = Main('..\\storage')
-        if result:
-            messagebox.showinfo('Done', 'All checks done!')
+    def run_script(self):
+        if len(self.list_of_saved_url) > 0:
+            result = CompareUrl('..\\storage', self.list_of_saved_url)
+            if result:
+                messagebox.showinfo('Done', 'All checks done!')
+        else:
+            messagebox.showerror('Error!', 'List is empty!')
 
     def add_url(self):
         label_add_url = tkinter.Label(self.tab_add_url, text='Add new url: ')
@@ -72,6 +78,6 @@ class WebCheckGUI(tkinter.Frame):
 
 
 if __name__ == "__main__":
-    root = tkinter.Tk()
-    app = WebCheckGUI(root)
+    window = tkinter.Tk()
+    app = WebCheckGUI(window, '..\\storage')
     app.mainloop()
