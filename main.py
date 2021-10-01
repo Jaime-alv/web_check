@@ -16,9 +16,9 @@ class CompareUrl:
     def __init__(self, root, stored_url):
         self.root = root
         self.list_of_saved_url = stored_url
-        self.loop()
-
-    def loop(self):
+        logging.basicConfig(filename=f'{self.root}\\logs\\log.txt', level=logging.DEBUG,
+                            format='%(levelname)s - %(message)s')
+        pathlib.Path(f'{self.root}\\logs\\log.txt').open('w')
         for each_url in self.list_of_saved_url:
             self.file_name = self.list_of_saved_url[each_url]['file_name']
             self.css_selector = self.list_of_saved_url[each_url]['css_selector']
@@ -70,33 +70,22 @@ class CompareUrl:
             open_url.close()
 
 
-class Main:
-    def __init__(self, root):
-        self.root = root
-        try:
-            logging.basicConfig(filename=f'{self.root}\\logs\\log.txt', level=logging.DEBUG,
-                                format='%(levelname)s - %(message)s')
-            pathlib.Path(f'{self.root}\\logs\\log.txt').open('w')
-            with pathlib.Path(f'{self.root}\\url_list.txt').open('r') as file:
-                list_of_saved_url = json.load(file)
-            if len(list_of_saved_url) == 0:
-                print('List is empty')
-                NewUrl(self.root, list_of_saved_url)
-            else:
-                CompareUrl(self.root, list_of_saved_url)
-        except FileNotFoundError:
-            logging.error('Running setup.py')
-            setup.setup(self.root)
-
-
 if __name__ == "__main__":
+    directory = 'storage'
     try:
-        logging.basicConfig(filename='storage\\logs\\log.txt', level=logging.DEBUG,
+        logging.basicConfig(filename=f'{directory}\\logs\\log.txt', level=logging.DEBUG,
                             format='%(levelname)s - %(message)s')
         pathlib.Path('storage\\logs\\log.txt').open('w')
+        with pathlib.Path(f'{directory}\\url_list.txt').open('r') as file:
+            list_of_saved_url = json.load(file)
+        if len(list_of_saved_url) == 0:
+            print('List is empty')
+            NewUrl(directory, list_of_saved_url)
+        else:
+            logging.debug(pathlib.Path.cwd())
+            logging.debug('main function')
+            print('Running...')
+            CompareUrl(directory, list_of_saved_url)
     except FileNotFoundError:
+        logging.error('Running setup.py')
         setup.setup('storage')
-    logging.debug(pathlib.Path.cwd())
-    logging.debug('main function')
-    print('Running...')
-    Main('storage')
