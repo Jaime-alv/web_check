@@ -20,6 +20,7 @@ class WebCheckGUI(tkinter.Frame):
         self.label = tkinter.Label(self)
         self.label['text'] = 'Web check'
         self.label['font'] = ("Arial Bold", 15)
+        self.for_delete = []
         self.label.pack()
         self.create_tab()
         self.terminate()
@@ -125,20 +126,31 @@ class WebCheckGUI(tkinter.Frame):
         for index in range(len(order)):
             self.true_false.append(tkinter.BooleanVar())
             self.true_false[-1].set(False)
-            c = tkinter.Checkbutton(self.tab_delete_url, text=order[index], variable=self.true_false[-1], command=lambda i=index: self.del_this(i))
-            c.pack()
+            c = tkinter.Checkbutton(self.tab_delete_url, text=order[index], variable=self.true_false[-1],
+                                    command=lambda i=index: self.del_this(i))
+            c.pack(anchor='w')
+        submit_button = tkinter.Button(self.tab_delete_url, text='Delete')
+        submit_button.pack(anchor='s', expand=1, ipadx=50, ipady=5)
+        submit_button['command'] = self.delete_only
+        submit_button = tkinter.Button(self.tab_delete_url, text='Delete all')
+        submit_button.pack(anchor='s', expand=1, ipadx=50, ipady=5)
+        submit_button['command'] = self.delete_all
 
+    def delete_only(self):
+        DeleteUrlGUI(self.root, self.list_of_saved_url, self.for_delete)
+
+    def delete_all(self):
+        for url in self.list_of_saved_url:
+            self.for_delete.append(url)
+        DeleteUrlGUI(self.root, self.list_of_saved_url, self.for_delete)
 
     def del_this(self, i):
-        self.for_delete = []
         order = sorted(self.list_of_saved_url)
         if self.true_false[i].get():
             self.for_delete.append(order[i])
         if not self.true_false[i].get() and order[i] in self.for_delete:
-            self.for_delete.pop(order[i])
+            self.for_delete.remove(order[i])
         print(self.for_delete)
-
-
 
     def create_menu(self):
         menu = tkinter.Menu(self.master)
