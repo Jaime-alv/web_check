@@ -15,47 +15,47 @@ class NewUrl:
         self.css_selector = add_css
         self.root = root
         self.list_of_saved_url = list_of_saved_url
+        logging.basicConfig(filename=f'{self.root}\\logs\\log.txt', level=logging.DEBUG,
+                            format='%(levelname)s - %(message)s')
         self.main()
 
     def main(self):
         logging.critical(f'passed url: {self.url}')
         try:  # check if given url is valid or not
             requests.get(self.url).raise_for_status()
-            # check if given url is already in json file
-            if self.list_of_saved_url.get(self.url, None) is None:
-                response = requests.get(self.url)
-                pass_charset = response.headers['Content-Type']
-                domain, header = self.domain_name()
-                enc_charset = get_charset(pass_charset)
+            response = requests.get(self.url)
+            pass_charset = response.headers['Content-Type']
+            domain, header = self.domain_name()
+            enc_charset = get_charset(pass_charset)
 
-                if header is None:
-                    name = domain
-                else:
-                    name = domain + '_' + header
+            if header is None:
+                name = domain
+            else:
+                name = domain + '_' + header
 
-                logging.warning(f'New file with name {name}.txt')
-                additional_info = {}
-                self.list_of_saved_url.setdefault(self.url, additional_info)
-                self.list_of_saved_url[self.url].setdefault('file_name', name)
-                self.list_of_saved_url[self.url].setdefault('encoding', enc_charset)
-                logging.info(f"{name} with encoding {enc_charset}")
+            logging.warning(f'New file with name {name}.txt')
+            additional_info = {}
+            self.list_of_saved_url.setdefault(self.url, additional_info)
+            self.list_of_saved_url[self.url].setdefault('file_name', name)
+            self.list_of_saved_url[self.url].setdefault('encoding', enc_charset)
+            logging.info(f"{name} with encoding {enc_charset}")
 
-                if self.css_selector is not None:
-                    new_file = pathlib.Path(f'{self.root}\\url_data\\{name}.txt').open('w', encoding=enc_charset)
-                    self.list_of_saved_url[self.url].setdefault('css_selector', self.css_selector)
-                    with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as f:
-                        json.dump(self.list_of_saved_url, f)
-                    bs4_object = bs4.BeautifulSoup(response.text, features="html.parser")
-                    parsed_element = bs4_object.select(self.css_selector)
-                    new_file.write(str(parsed_element[0].get_text()))
+            if self.css_selector is not None:
+                new_file = pathlib.Path(f'{self.root}\\url_data\\{name}.txt').open('w', encoding=enc_charset)
+                self.list_of_saved_url[self.url].setdefault('css_selector', self.css_selector)
+                with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as f:
+                    json.dump(self.list_of_saved_url, f)
+                bs4_object = bs4.BeautifulSoup(response.text, features="html.parser")
+                parsed_element = bs4_object.select(self.css_selector)
+                new_file.write(str(parsed_element[0].get_text()))
 
-                elif self.css_selector is None:
-                    new_file = pathlib.Path(f'{self.root}\\url_data\\{name}.txt').open('wb')
-                    self.list_of_saved_url[self.url].setdefault('css_selector', None)
-                    for chunk in response.iter_content(10000):
-                        new_file.write(chunk)
-                logging.debug(f'Stored url in json file {self.list_of_saved_url}')
-                print(f"Everything ok with {name}")
+            elif self.css_selector is None:
+                new_file = pathlib.Path(f'{self.root}\\url_data\\{name}.txt').open('wb')
+                self.list_of_saved_url[self.url].setdefault('css_selector', None)
+                for chunk in response.iter_content(10000):
+                    new_file.write(chunk)
+            logging.debug(f'Stored url in json file {self.list_of_saved_url}')
+            print(f"Everything ok with {name}")
         except Exception:
             logging.error(f"Something went wrong with {self.url}")
             response = requests.get(self.url)
@@ -97,8 +97,10 @@ class DeleteUrl:
                 pathing = self.list_of_saved_url[order[(int(url_number) - 1)]]['file_name']
                 file = pathlib.Path(f'{self.root}\\url_data\\{pathing}.txt')
                 backup_file = pathlib.Path(f'{self.root}\\url_data\\backup\\{pathing}.txt')
-                pathlib.Path.unlink(file)
-                pathlib.Path.unlink(backup_file)
+                if file.exists():
+                    pathlib.Path.unlink(file)
+                if backup_file.exists():
+                    pathlib.Path.unlink(backup_file)
                 del self.list_of_saved_url[order[(int(url_number) - 1)]]
                 with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as overwrite:
                     json.dump(self.list_of_saved_url, overwrite)
@@ -171,12 +173,13 @@ if __name__ == "__main__":
         print('Url needs to start with http:// or https://')
         new_url = input('@: ')
         print('Add unique css selector.')
-        new_css = input('css: ')
-        if new_css != '':
-            css_selector = new_css
+        css = input('css: ')
+        if css != '':
+            css_selector = css
         else:
             css_selector = None
-        NewUrl('..\\storage', stored_url, new_url, css_selector)
+        if stored_url.get(new_url, None) is None:
+            result = NewUrl('..\\storage', stored_url, new_url, css_selector)
     elif answer == '2':
         ModifyCss('..\\storage', stored_url)
     elif answer == '3':
