@@ -38,6 +38,7 @@ class WebCheckGUI(tkinter.Frame):
         self.home()
         self.add_url()
         self.modify_url()
+        self.delete_url_tab()
 
     def terminate(self):
         close_program = tkinter.Button(self, fg='red', command=self.master.destroy)
@@ -76,7 +77,7 @@ class WebCheckGUI(tkinter.Frame):
         entry_css.pack(fill=tkinter.X)
         entry_css['textvariable'] = self.new_url_css
         submit_button = tkinter.Button(self.tab_add_url, text='Submit new url')
-        submit_button.pack(anchor='center', expand=1, ipadx=20, ipady=5)
+        submit_button.pack(anchor='center', expand=1, ipadx=100, ipady=5)
         submit_button['command'] = self.add_new_url
 
     def add_new_url(self):
@@ -117,6 +118,27 @@ class WebCheckGUI(tkinter.Frame):
         if box:
             ModifyCssGUI(self.root, self.list_of_saved_url, url, self.modify_css.get())
             messagebox.showinfo(title=None, message='Done')
+
+    def delete_url_tab(self):
+        self.true_false = []
+        order = sorted(self.list_of_saved_url)
+        for index in range(len(order)):
+            self.true_false.append(tkinter.BooleanVar())
+            self.true_false[-1].set(False)
+            c = tkinter.Checkbutton(self.tab_delete_url, text=order[index], variable=self.true_false[-1], command=lambda i=index: self.del_this(i))
+            c.pack()
+
+
+    def del_this(self, i):
+        self.for_delete = []
+        order = sorted(self.list_of_saved_url)
+        if self.true_false[i].get():
+            self.for_delete.append(order[i])
+        if not self.true_false[i].get() and order[i] in self.for_delete:
+            self.for_delete.pop(order[i])
+        print(self.for_delete)
+
+
 
     def create_menu(self):
         menu = tkinter.Menu(self.master)
