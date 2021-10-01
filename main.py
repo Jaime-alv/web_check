@@ -41,7 +41,7 @@ class CompareUrl:
             temp_file = pathlib.Path(f'{self.root}\\temp.txt').open('wb')
             for chunk in new_url.iter_content(10000):
                 temp_file.write(chunk)
-                temp_file.close()
+            temp_file.close()
         compare_files = filecmp.cmp(f'{self.root}\\temp.txt', self.path, shallow=False)
         if compare_files:
             logging.warning(f"{self.url} Equal to stored one")
