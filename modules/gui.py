@@ -57,9 +57,8 @@ class WebCheckGUI(tkinter.Frame):
 
     def run_script(self):
         if len(self.list_of_saved_url) > 0:
-            result = CompareUrl('..\\storage', self.list_of_saved_url)
-            if result:
-                messagebox.showinfo('Done', 'All checks done!')
+            CompareUrl('..\\storage', self.list_of_saved_url)
+            messagebox.showinfo('Done', 'All checks done!')
         else:
             messagebox.showerror('Error!', 'List is empty!')
 
@@ -87,9 +86,11 @@ class WebCheckGUI(tkinter.Frame):
         else:
             unique_css = None
         if url.startswith(r'http') and self.list_of_saved_url.get(url, None) is None:
-            add = NewUrl(self.root, self.list_of_saved_url, url, unique_css)
-            if add:
+            try:
+                NewUrl(self.root, self.list_of_saved_url, url, unique_css)
                 messagebox.showinfo(f'Done', f'New url successfully added:\n{url}')
+            except:
+                messagebox.showerror(title=None, message='Error!')
         elif not url.startswith(r'http'):
             messagebox.showerror('Error!', 'Incorrect format.\nUrl needs to start with http:// or https://')
         else:
@@ -99,20 +100,23 @@ class WebCheckGUI(tkinter.Frame):
         label_modify_css = tkinter.Label(self.tab_modify_url, text='Introduce new css:')
         label_modify_css.pack(side='top', anchor='w')
         self.modify_css = tkinter.StringVar()
-        entry_css = tkinter.Entry(self.tab_modify_url)
-        entry_css.pack(side='top', fill=tkinter.X)
+        self.entry_new_css = tkinter.Entry(self.tab_modify_url)
+        self.entry_new_css.pack(side='top', fill=tkinter.X)
+        self.entry_new_css["textvariable"] = self.modify_css
         label_modify_css = tkinter.Label(self.tab_modify_url, text='Click url to modify:')
         label_modify_css.pack(side='top', anchor='w')
         self.button = []
         order = sorted(self.list_of_saved_url)
-        for i in range(len(order)):
-            self.button.append(tkinter.Button(self.tab_modify_url, text=order[i], command=lambda i=i: self.open_this(order[i])))
-            self.button[i].pack(anchor='w', fill=tkinter.X)
+        for index in range(len(order)):
+            self.button.append(
+                tkinter.Button(self.tab_modify_url, text=order[index], command=lambda i=index: self.mod_this(order[i])))
+            self.button[index].pack(anchor='w', fill=tkinter.X)
 
-
-    def open_this(self, myNum):
-        print(myNum)
-
+    def mod_this(self, url):
+        box = messagebox.askokcancel(title=None, message=f'Do you want to modify {url}')
+        if box:
+            ModifyCssGUI(self.root, self.list_of_saved_url, url, self.modify_css.get())
+            messagebox.showinfo(title=None, message='Done')
 
     def create_menu(self):
         menu = tkinter.Menu(self.master)
