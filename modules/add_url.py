@@ -52,6 +52,8 @@ class NewUrl:
             elif self.css_selector is None:
                 new_file = pathlib.Path(f'{self.root}\\url_data\\{name}.txt').open('wb')
                 self.list_of_saved_url[self.url].setdefault('css_selector', None)
+                with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as f:
+                    json.dump(self.list_of_saved_url, f)
                 for chunk in response.iter_content(10000):
                     new_file.write(chunk)
             logging.debug(f'Stored url in json file {self.list_of_saved_url}')
