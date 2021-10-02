@@ -130,10 +130,10 @@ class WebCheckGUI(tkinter.Frame):
                                     command=lambda i=index: self.del_this(i))
             c.pack(anchor='w')
         submit_button = tkinter.Button(self.tab_delete_url, text='Delete')
-        submit_button.pack(anchor='s', expand=1, ipadx=50, ipady=5)
+        submit_button.pack(side='bottom', anchor='s', ipadx=50, ipady=5)
         submit_button['command'] = self.delete_only
         submit_button = tkinter.Button(self.tab_delete_url, text='Delete all')
-        submit_button.pack(anchor='s', expand=1, ipadx=50, ipady=5)
+        submit_button.pack(side='bottom', anchor='s', ipadx=43, ipady=5)
         submit_button['command'] = self.delete_all
 
     def delete_only(self):
