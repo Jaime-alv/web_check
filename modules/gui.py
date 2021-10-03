@@ -22,20 +22,20 @@ class WebCheckGUI(tkinter.Frame):
         self.label['font'] = ("Arial Bold", 15)
         self.for_delete = []
         self.label.pack()
-        self.create_tab()
-        self.terminate()
+        self.tab_control = tkinter.ttk.Notebook(self)
+        self.tab_home = ttk.Frame(self.tab_control)
+        self.tab_add_url = ttk.Frame(self.tab_control)
+        self.tab_modify_url = ttk.Frame(self.tab_control)
+        self.tab_delete_url = ttk.Frame(self.tab_control)
+        self.tab_control.add(self.tab_home, text='Home')
+        self.tab_control.add(self.tab_add_url, text='Add url')
+        self.tab_control.add(self.tab_modify_url, text='Modify url')
+        self.tab_control.add(self.tab_delete_url, text='Delete url')
+        self.tab_control.pack(expand=1, fill='both')
+        self.main()
 
-    def create_tab(self):
-        tab_control = tkinter.ttk.Notebook(self)
-        self.tab_home = ttk.Frame(tab_control)
-        self.tab_add_url = ttk.Frame(tab_control)
-        self.tab_modify_url = ttk.Frame(tab_control)
-        self.tab_delete_url = ttk.Frame(tab_control)
-        tab_control.add(self.tab_home, text='Home')
-        tab_control.add(self.tab_add_url, text='Add url')
-        tab_control.add(self.tab_modify_url, text='Modify url')
-        tab_control.add(self.tab_delete_url, text='Delete url')
-        tab_control.pack(expand=1, fill='both')
+    def main(self):
+        self.terminate()
         self.home()
         self.add_url()
         self.modify_url()
@@ -56,6 +56,17 @@ class WebCheckGUI(tkinter.Frame):
         label_github = tkinter.Label(self.tab_home)
         label_github['text'] = 'https://github.com/Jaime-alv/web_check.git'
         label_github.pack(side='bottom')
+
+    def refresh(self):
+        self.tab_modify_url.destroy()
+        self.tab_delete_url.destroy()
+        self.tab_modify_url = ttk.Frame(self.tab_control)
+        self.tab_delete_url = ttk.Frame(self.tab_control)
+        self.tab_control.add(self.tab_modify_url, text='Modify url')
+        self.tab_control.add(self.tab_delete_url, text='Delete url')
+        self.tab_control.pack(expand=1, fill='both')
+        self.modify_url()
+        self.delete_url_tab()
 
     def run_script(self):
         if len(self.list_of_saved_url) > 0:
@@ -91,6 +102,7 @@ class WebCheckGUI(tkinter.Frame):
             try:
                 NewUrl(self.root, self.list_of_saved_url, url, unique_css)
                 messagebox.showinfo(f'Done', f'New url successfully added:\n{url}')
+                self.refresh()
             except:
                 messagebox.showerror(title=None, message='Error!')
         elif not url.startswith(r'http'):
@@ -138,11 +150,13 @@ class WebCheckGUI(tkinter.Frame):
 
     def delete_only(self):
         DeleteUrlGUI(self.root, self.list_of_saved_url, self.for_delete)
+        self.refresh()
 
     def delete_all(self):
         for url in self.list_of_saved_url:
             self.for_delete.append(url)
         DeleteUrlGUI(self.root, self.list_of_saved_url, self.for_delete)
+        self.refresh()
 
     def del_this(self, i):
         order = sorted(self.list_of_saved_url)
@@ -150,7 +164,6 @@ class WebCheckGUI(tkinter.Frame):
             self.for_delete.append(order[i])
         if not self.true_false[i].get() and order[i] in self.for_delete:
             self.for_delete.remove(order[i])
-        print(self.for_delete)
 
     def create_menu(self):
         menu = tkinter.Menu(self.master)
