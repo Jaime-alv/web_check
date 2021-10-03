@@ -39,7 +39,9 @@ class WebCheckGUI(tkinter.Frame):
         self.home()
         self.add_url()
         self.modify_url()
+        self.create_radio_button()
         self.delete_url_tab()
+        self.create_check_button()
 
     def terminate(self):
         close_program = tkinter.Button(self, fg='red', command=self.master.destroy)
@@ -58,15 +60,14 @@ class WebCheckGUI(tkinter.Frame):
         label_github.pack(side='bottom')
 
     def refresh(self):
-        self.tab_modify_url.destroy()
-        self.tab_delete_url.destroy()
-        self.tab_modify_url = ttk.Frame(self.tab_control)
-        self.tab_delete_url = ttk.Frame(self.tab_control)
-        self.tab_control.add(self.tab_modify_url, text='Modify url')
-        self.tab_control.add(self.tab_delete_url, text='Delete url')
-        self.tab_control.pack(expand=1, fill='both')
-        self.modify_url()
-        self.delete_url_tab()
+        self.modify_frame.destroy()
+        self.delete_frame.destroy()
+        self.modify_frame = tkinter.Frame(self.tab_modify_url)
+        self.modify_frame.pack(expand=1, fill='both')
+        self.delete_frame = tkinter.Frame(self.tab_delete_url)
+        self.delete_frame.pack(expand=1, fill='both')
+        self.create_radio_button()
+        self.create_check_button()
 
     def run_script(self):
         if len(self.list_of_saved_url) > 0:
@@ -119,19 +120,23 @@ class WebCheckGUI(tkinter.Frame):
         self.entry_new_css["textvariable"] = self.modify_css
         label_modify_css = tkinter.Label(self.tab_modify_url, text='Click url to modify:')
         label_modify_css.pack(side='top', anchor='w')
+        self.modify_frame = tkinter.Frame(self.tab_modify_url)
+        self.modify_frame.pack(expand=1, fill='both')
+        button_submit = tkinter.Button(self.tab_modify_url, text='Submit')
+        button_submit.pack(side='bottom', anchor='s')
+        button_submit['command'] = self.modify_this_url
+
+    def create_radio_button(self):
         self.for_modify = []
         order = sorted(self.list_of_saved_url)
         pos = 1
         for index in range(len(order)):
             self.check_var = tkinter.StringVar()
             self.for_modify.append(self.check_var)
-            rb = tkinter.Radiobutton(self.tab_modify_url, text=f"{pos:02}. {order[index]}",
+            rb = tkinter.Radiobutton(self.modify_frame, text=f"{pos:02}. {order[index]}",
                                      command=lambda i=index: self.mod_this(order[i]), value=order[index])
             rb.pack(anchor='w')
             pos += 1
-        button_submit = tkinter.Button(self.tab_modify_url, text='Submit')
-        button_submit.pack(side='bottom', anchor='s')
-        button_submit['command'] = self.modify_this_url
 
     def mod_this(self, url):
         self.mod_this_url = url
@@ -141,22 +146,26 @@ class WebCheckGUI(tkinter.Frame):
         messagebox.showinfo(title='Done', message=f'{self.mod_this_url}\nNew css selected.')
 
     def delete_url_tab(self):
-        self.true_false = []
-        order = sorted(self.list_of_saved_url)
-        pos = 1
-        for index in range(len(order)):
-            self.true_false.append(tkinter.BooleanVar())
-            self.true_false[-1].set(False)
-            c = tkinter.Checkbutton(self.tab_delete_url, text=f"{pos:02}. {order[index]}", variable=self.true_false[-1],
-                                    command=lambda i=index: self.del_this(i))
-            c.pack(anchor='w')
-            pos += 1
+        self.delete_frame = tkinter.Frame(self.tab_delete_url)
+        self.delete_frame.pack(expand=1, fill='both')
         submit_button = tkinter.Button(self.tab_delete_url, text='Delete')
         submit_button.pack(side='bottom', anchor='s', ipadx=50, ipady=5)
         submit_button['command'] = self.delete_only
         submit_button = tkinter.Button(self.tab_delete_url, text='Delete all')
         submit_button.pack(side='bottom', anchor='s', ipadx=43, ipady=5)
         submit_button['command'] = self.delete_all
+
+    def create_check_button(self):
+        self.true_false = []
+        order = sorted(self.list_of_saved_url)
+        pos = 1
+        for index in range(len(order)):
+            self.true_false.append(tkinter.BooleanVar())
+            self.true_false[-1].set(False)
+            c = tkinter.Checkbutton(self.delete_frame, text=f"{pos:02}. {order[index]}", variable=self.true_false[-1],
+                                    command=lambda i=index: self.del_this(i))
+            c.pack(anchor='w')
+            pos += 1
 
     def delete_only(self):
         DeleteUrlGUI(self.root, self.list_of_saved_url, self.for_delete)
