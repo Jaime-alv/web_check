@@ -104,10 +104,8 @@ class DeleteUrlGUI:
             file_name = list_of_saved_url[element]['file_name']
             file = pathlib.Path(f'{self.root}\\url_data\\{file_name}.txt')
             backup_file = pathlib.Path(f'{self.root}\\url_data\\backup\\{file_name}_backup.txt')
-            if file.exists():
-                pathlib.Path.unlink(file)
-            if backup_file.exists():
-                pathlib.Path.unlink(backup_file)
+            pathlib.Path.unlink(file, missing_ok=True)
+            pathlib.Path.unlink(backup_file, missing_ok=True)
             del self.list_of_saved_url[element]
         with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as overwrite:
             json.dump(self.list_of_saved_url, overwrite)
