@@ -3,8 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from main import CompareUrl
 from add_url import *
-import json
-import pathlib
+from tkscrolledframe import ScrolledFrame
 
 
 class WebCheckGUI(tkinter.Frame):
@@ -14,7 +13,7 @@ class WebCheckGUI(tkinter.Frame):
         with pathlib.Path(f'{self.root}\\url_list.txt').open('r') as file:
             self.list_of_saved_url = json.load(file)
         self.master = master
-        self.master.geometry('500x300')
+        self.master.geometry('650x480')
         self.pack(expand=1, fill='both')
         self.master.title('web check')
         self.label = tkinter.Label(self)
@@ -62,10 +61,8 @@ class WebCheckGUI(tkinter.Frame):
     def refresh(self):
         self.modify_frame.destroy()
         self.delete_frame.destroy()
-        self.modify_frame = tkinter.Frame(self.tab_modify_url)
-        self.modify_frame.pack(expand=1, fill='both')
-        self.delete_frame = tkinter.Frame(self.tab_delete_url)
-        self.delete_frame.pack(expand=1, fill='both')
+        self.modify_frame = self.scroll_frame_mod_url.display_widget(tkinter.Frame)
+        self.delete_frame = self.scroll_frame_del_url.display_widget(tkinter.Frame)
         self.create_radio_button()
         self.create_check_button()
 
@@ -114,14 +111,21 @@ class WebCheckGUI(tkinter.Frame):
     def modify_url(self):
         label_modify_css = tkinter.Label(self.tab_modify_url, text='Introduce new css:')
         label_modify_css.pack(side='top', anchor='w')
+
         self.modify_css = tkinter.StringVar()
         self.entry_new_css = tkinter.Entry(self.tab_modify_url)
         self.entry_new_css.pack(side='top', fill=tkinter.X)
         self.entry_new_css["textvariable"] = self.modify_css
+
         label_modify_css = tkinter.Label(self.tab_modify_url, text='Click url to modify:')
         label_modify_css.pack(side='top', anchor='w')
-        self.modify_frame = tkinter.Frame(self.tab_modify_url)
-        self.modify_frame.pack(expand=1, fill='both')
+
+        self.scroll_frame_mod_url = ScrolledFrame(self.tab_modify_url, width=450, height=250)
+        self.scroll_frame_mod_url.pack(side="top", expand=1, fill="both")
+        self.scroll_frame_mod_url.bind_arrow_keys(self.tab_modify_url)
+        self.scroll_frame_mod_url.bind_scroll_wheel(self.tab_modify_url)
+        self.modify_frame = self.scroll_frame_mod_url.display_widget(tkinter.Frame)
+
         button_submit = tkinter.Button(self.tab_modify_url, text='Submit')
         button_submit.pack(side='bottom', anchor='s')
         button_submit['command'] = self.modify_this_url
@@ -146,13 +150,22 @@ class WebCheckGUI(tkinter.Frame):
         messagebox.showinfo(title='Done', message=f'{self.mod_this_url}\nNew css selected.')
 
     def delete_url_tab(self):
-        self.delete_frame = tkinter.Frame(self.tab_delete_url)
-        self.delete_frame.pack(expand=1, fill='both')
-        submit_button = tkinter.Button(self.tab_delete_url, text='Delete')
-        submit_button.pack(side='bottom', anchor='s', ipadx=50, ipady=5)
+        label_delete = tkinter.Label(self.tab_delete_url, text='Check url:')
+        label_delete.pack(side='top', anchor='w')
+
+        self.scroll_frame_del_url = ScrolledFrame(self.tab_delete_url, width=450, height=250)
+        self.scroll_frame_del_url.pack(side="top", expand=1, fill="both")
+        self.scroll_frame_del_url.bind_arrow_keys(self.tab_modify_url)
+        self.scroll_frame_del_url.bind_scroll_wheel(self.tab_modify_url)
+        self.delete_frame = self.scroll_frame_del_url.display_widget(tkinter.Frame)
+
+        frame_delete_button = tkinter.Frame(self.tab_delete_url)
+        frame_delete_button.pack(side='bottom')
+        submit_button = tkinter.Button(frame_delete_button, text='Delete')
+        submit_button.grid(row=0, column=1, ipadx=50, ipady=5)
         submit_button['command'] = self.delete_only
-        submit_button = tkinter.Button(self.tab_delete_url, text='Delete all')
-        submit_button.pack(side='bottom', anchor='s', ipadx=43, ipady=5)
+        submit_button = tkinter.Button(frame_delete_button, text='Delete all')
+        submit_button.grid(row=0, column=0, ipadx=43, ipady=5)
         submit_button['command'] = self.delete_all
 
     def create_check_button(self):
