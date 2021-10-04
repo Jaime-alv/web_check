@@ -52,7 +52,7 @@ class WebCheckGUI(tkinter.Frame):
         close_program['text'] = 'Close program'
         close_program['padx'] = 5
         close_program['pady'] = 5
-        close_program.pack(side='bottom')
+        close_program.pack(side='bottom', anchor='e')
 
     def home(self):
         label_logo = tkinter.Label(self.tab_home, text='Web check', font=('bahnschrift', 25, 'bold'))
@@ -90,6 +90,7 @@ class WebCheckGUI(tkinter.Frame):
         label_add_url.pack(anchor='w', padx=10)
         entry_url = tkinter.Entry(self.tab_add_url)
         entry_url.pack(fill=tkinter.X, padx=10)
+        entry_url.focus()
         entry_url["textvariable"] = self.new_url_string
         label_add_css = tkinter.Label(self.tab_add_url, text='Add unique css: ', font=('bahnschrift', 11))
         label_add_css.pack(anchor='w', padx=10)
@@ -102,7 +103,7 @@ class WebCheckGUI(tkinter.Frame):
         batch_button['command'] = self.add_batch_url
 
         submit_button = tkinter.Button(self.tab_add_url, text='Submit new url', font=('bahnschrift', 11))
-        submit_button.pack(anchor='center', expand=1, ipadx=100, ipady=5)
+        submit_button.pack(anchor='center', expand=1, ipadx=50, ipady=5)
         submit_button['command'] = self.add_new_url
 
     def add_batch_url(self):
@@ -146,6 +147,7 @@ class WebCheckGUI(tkinter.Frame):
         self.modify_css = tkinter.StringVar()
         self.entry_new_css = tkinter.Entry(self.tab_modify_url)
         self.entry_new_css.pack(side='top', fill=tkinter.X, padx=10)
+        self.entry_new_css.focus()
         self.entry_new_css["textvariable"] = self.modify_css
 
         label_modify_css = tkinter.Label(self.tab_modify_url, text='Click url to modify:', font=('bahnschrift', 11))
@@ -158,7 +160,7 @@ class WebCheckGUI(tkinter.Frame):
         self.modify_frame = self.scroll_frame_mod_url.display_widget(tkinter.Frame)
 
         button_submit = tkinter.Button(self.tab_modify_url, text='Submit', font=('bahnschrift', 11))
-        button_submit.pack(side='bottom', anchor='s', ipadx=25, ipady=10)
+        button_submit.pack(side='bottom', anchor='s', ipadx=31, ipady=5)
         button_submit['command'] = self.modify_this_url
 
     def create_radio_button(self):
