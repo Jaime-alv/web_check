@@ -1,0 +1,8 @@
+
+include *.md
+include *.txt
+recursive-include image *
+
+
+recursive-exclude storage *
+recursive-exclude tests *
