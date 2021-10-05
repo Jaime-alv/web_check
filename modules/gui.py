@@ -5,6 +5,8 @@ from tkinter import filedialog
 from main import CompareUrl
 from add_url import *
 from tkscrolledframe import ScrolledFrame
+
+
 # font font=('bahnschrift', 13)
 
 
@@ -239,6 +241,13 @@ class WebCheckGUI(tkinter.Frame):
 
 
 if __name__ == "__main__":
+    directory = '..\\storage'
+    try:
+        logging.basicConfig(filename=f'{directory}\\logs\\log.txt', level=logging.DEBUG,
+                            format='%(levelname)s - %(message)s')
+        pathlib.Path(f'{directory}\\logs\\log.txt').open('w')
+    except FileNotFoundError:
+        CreateFolder(directory)
     window = tkinter.Tk()
-    app = WebCheckGUI(window, '..\\storage')
+    app = WebCheckGUI(window, directory)
     app.mainloop()

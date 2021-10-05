@@ -7,7 +7,6 @@ import webbrowser
 import filecmp
 import json
 import logging
-from modules import setup
 import shutil
 
 
@@ -15,9 +14,6 @@ class CompareUrl:
     def __init__(self, root, stored_url):
         self.root = root
         self.list_of_saved_url = stored_url
-        logging.basicConfig(filename=f'{self.root}\\logs\\log.txt', level=logging.DEBUG,
-                            format='%(levelname)s - %(message)s')
-        pathlib.Path(f'{self.root}\\logs\\log.txt').open('w')
         for each_url in self.list_of_saved_url:
             self.file_name = self.list_of_saved_url[each_url]['file_name']
             self.css_selector = self.list_of_saved_url[each_url]['css_selector']
@@ -85,5 +81,5 @@ if __name__ == "__main__":
             print('Running...')
             CompareUrl(directory, list_of_saved_url)
     except FileNotFoundError:
-        logging.error('Running setup.py')
-        setup.setup('storage')
+        logging.error('Run main script first!')
+

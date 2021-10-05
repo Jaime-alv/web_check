@@ -2,7 +2,6 @@
 # Copyright 2021 Jaime Álvarez Fernández
 import re
 import pathlib
-import sys
 import requests
 import json
 import logging
@@ -15,8 +14,6 @@ class NewUrl:
         self.css_selector = add_css
         self.root = root
         self.list_of_saved_url = list_of_saved_url
-        logging.basicConfig(filename=f'{self.root}\\logs\\log.txt', level=logging.DEBUG,
-                            format='%(levelname)s - %(message)s')
         self.main()
 
     def main(self):
@@ -81,8 +78,6 @@ class ModifyCssGUI:
         self.list_of_saved_url = list_of_saved_url
         self.url = url
         self.modify_css = modify_css
-        logging.basicConfig(filename=f'{self.root}\\logs\\log.txt', level=logging.DEBUG,
-                            format='%(levelname)s - %(message)s')
 
         if self.modify_css != '':
             self.modified_css = self.modify_css
@@ -111,84 +106,28 @@ class DeleteUrlGUI:
             json.dump(self.list_of_saved_url, overwrite)
 
 
-class DeleteUrl:
-    def __init__(self, root, list_of_saved_url):
+class CreateFolder:
+    def __init__(self, root):
         self.root = root
-        self.list_of_saved_url = list_of_saved_url
-        if len(self.list_of_saved_url) > 0:
-            self.delete_stored_url()
-        else:
-            print('List is empty!')
+        if not pathlib.Path(f'{self.root}\\logs\\log.txt').exists():
+            pathlib.Path(f'{self.root}\\logs').mkdir(parents=True, exist_ok=True)
+            new_log = pathlib.Path(f'{self.root}\\logs\\log.txt').open('w')
+            new_log.close()
+            logging.warning('Log directory created')
 
-    def delete_stored_url(self):
-        order = sorted(self.list_of_saved_url)
-        index = 1
-        print('00. Delete all')
-        for http in order:
-            print(f"{index:02}. {http}")
-            index += 1
-        print('Which url do you want to delete?')
-        while True:
-            url_number = input('#: ')
-            if url_number.isdigit() and 0 < int(url_number) <= (index - 1):
-                pathing = self.list_of_saved_url[order[(int(url_number) - 1)]]['file_name']
-                file = pathlib.Path(f'{self.root}\\url_data\\{pathing}.txt')
-                backup_file = pathlib.Path(f'{self.root}\\url_data\\backup\\{pathing}_backup.txt')
-                if file.exists():
-                    pathlib.Path.unlink(file)
-                if backup_file.exists():
-                    pathlib.Path.unlink(backup_file)
-                del self.list_of_saved_url[order[(int(url_number) - 1)]]
-                with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as overwrite:
-                    json.dump(self.list_of_saved_url, overwrite)
-                break
-            elif url_number.isdigit() and int(url_number) == 0:
-                url_data = pathlib.Path(f'{self.root}\\url_data')
-                for file in url_data.iterdir():
-                    if file.is_file():
-                        pathlib.Path.unlink(file)
-                for file in pathlib.Path(f"{self.root}\\url_data\\backup").iterdir():
-                    if file.is_file():
-                        pathlib.Path.unlink(file)
-                clean_dict = {}
-                with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as overwrite:
-                    json.dump(clean_dict, overwrite)
-                break
-            elif url_number.lower() == 'exit':
-                sys.exit()
-            else:
-                print('Error! Enter a valid input.')
+        if not pathlib.Path(f'{self.root}\\url_data').exists():
+            logging.error('No directory found')
+            pathlib.Path(f'{self.root}\\url_data').mkdir(parents=True, exist_ok=True)
+            pathlib.Path(f'{self.root}\\url_data\\backup').mkdir(parents=True, exist_ok=True)
+            logging.debug('directory created')
 
-
-class ModifyCss:
-    def __init__(self, root, list_of_saved_url):
-        self.root = root
-        self.list_of_saved_url = list_of_saved_url
-        self.modify()
-
-    def modify(self):
-        order = sorted(self.list_of_saved_url)
-        index = 1
-        for url in order:
-            print(f"{index:02}. {url}")
-            index += 1
-        print('Which url do you want to modify its css selector?')
-        while True:
-            url_number = input('#: ')
-            if url_number.isdigit() and 0 < int(url_number) < index:
-                print('Fill in new css selector.')
-                new_css = input('@: ')
-                switched_url = self.list_of_saved_url[order[(int(url_number) - 1)]]
-                logging.warning(f"New css selector for {switched_url['file_name']}")
-                logging.info(f"old: {switched_url['css_selector']}, new: {new_css}")
-                switched_url['css_selector'] = new_css
-                with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as overwrite:
-                    json.dump(self.list_of_saved_url, overwrite)
-                break
-            elif url_number.lower() == 'exit':
-                sys.exit()
-            else:
-                print('Error! Enter a valid input.')
+        if not pathlib.Path(f'{self.root}\\url_list.txt').exists():
+            logging.error('No url_list.txt')
+            pathlib.Path(f'{self.root}\\url_list.txt').open('w')
+            json_url_dict = {}
+            with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as f:
+                json.dump(json_url_dict, f)
+            logging.debug('text file for json created')
 
 
 if __name__ == "__main__":
@@ -198,26 +137,16 @@ if __name__ == "__main__":
         with pathlib.Path(f'..\\storage\\url_list.txt').open('r') as json_file:
             stored_url = json.load(json_file)
     except FileNotFoundError:
-        print('There is an error with some files, run setup.py')
-    print("""
-1. Add url
-2. Modify url
-3. Delete url
-    """)
-    answer = input('#: ')
-    if answer == '1':
-        print('Add desired url.')
-        print('Url needs to start with http:// or https://')
-        new_url = input('@: ')
-        print('Add unique css selector.')
-        css = input('css: ')
-        if css != '':
-            css_selector = css
-        else:
-            css_selector = None
-        if stored_url.get(new_url, None) is None:
-            result = NewUrl('..\\storage', stored_url, new_url, css_selector)
-    elif answer == '2':
-        ModifyCss('..\\storage', stored_url)
-    elif answer == '3':
-        DeleteUrl('..\\storage', stored_url)
+        CreateFolder('..\\storage')
+
+    print('Add desired url.')
+    print('Url needs to start with http:// or https://')
+    new_url = input('@: ')
+    print('Add unique css selector.')
+    css = input('css: ')
+    if css != '':
+        css_selector = css
+    else:
+        css_selector = None
+    if stored_url.get(new_url, None) is None:
+        result = NewUrl('..\\storage', stored_url, new_url, css_selector)
