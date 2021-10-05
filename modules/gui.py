@@ -1,7 +1,9 @@
+# Copyright 2021 Jaime Álvarez Fernández
 import tkinter
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
+from PIL import ImageTk, Image
 from main import CompareUrl
 from add_url import *
 from tkscrolledframe import ScrolledFrame
@@ -23,11 +25,7 @@ class WebCheckGUI(tkinter.Frame):
         self.master.geometry('650x480')
         self.pack(expand=1, fill='both')
         self.master.title('web check')
-        self.label = tkinter.Label(self)
-        self.label['text'] = 'Web check'
-        self.label['font'] = ('bahnschrift', 15)
         self.for_delete = []
-        self.label.pack()
         self.tab_control = tkinter.ttk.Notebook(self)
         self.tab_home = ttk.Frame(self.tab_control)
         self.tab_add_url = ttk.Frame(self.tab_control)
@@ -48,24 +46,29 @@ class WebCheckGUI(tkinter.Frame):
         self.create_radio_button()
         self.delete_url_tab()
         self.create_check_button()
+        self.create_menu()
 
     def terminate(self):
         close_program = tkinter.Button(self, fg='red', command=self.master.destroy, font=('bahnschrift', 11))
-        close_program['text'] = 'Close program'
+        close_program['text'] = 'Close script'
         close_program['padx'] = 5
         close_program['pady'] = 5
         close_program.pack(side='bottom', anchor='e')
 
     def home(self):
-        label_logo = tkinter.Label(self.tab_home, text='Web check', font=('bahnschrift', 25, 'bold'))
-        label_logo.pack(anchor='center', expand=1)
+        image = Image.open('logo.png')
+        img = ImageTk.PhotoImage(image)
+        panel = tkinter.Label(self.tab_home, image=img)
+        panel.image = img
+        panel.pack(pady=20)
+
         button_run_script = tkinter.Button(self.tab_home, text='Run!')
         button_run_script['command'] = self.run_script
         button_run_script['font'] = ('bahnschrift', 15, 'bold')
-        button_run_script.pack(anchor='center', expand=1, ipadx=20, ipady=5)
-        label_github = tkinter.Label(self.tab_home)
-        label_github['text'] = 'https://github.com/Jaime-alv/web_check.git'
-        label_github.pack(side='bottom')
+        button_run_script.pack(side='top', anchor='center', expand=1, ipadx=20, ipady=5)
+        label_copyright = tkinter.Label(self.tab_home, font=('bahnschrift', 10), fg='#686565')
+        label_copyright['text'] = 'Copyright 2021 Jaime Álvarez Fernández'
+        label_copyright.pack(side='bottom', anchor='s')
 
     def refresh(self):
         self.modify_css.set('')
@@ -114,13 +117,15 @@ class WebCheckGUI(tkinter.Frame):
         lines = open_file.read_text().splitlines()
         url_plus_css = re.compile(r'(?P<url>.*?)(\s)(?P<css>.*)')
         for line in lines:
-            mo = url_plus_css.search(line)
-            if mo is not None:
+            if len(line.split(' ', maxsplit=1)) > 1:
+                mo = url_plus_css.search(line)
                 if mo.group('url').startswith(r'http') and self.list_of_saved_url.get(mo.group('url'), None) is None:
                     try:
                         NewUrl(self.root, self.list_of_saved_url, mo.group('url'), mo.group('css').strip())
-                    except:
+                    except Exception:
                         messagebox.showerror(title=None, message=f"Error with {mo.group('url')}!")
+            elif line.startswith(r'http') and self.list_of_saved_url.get(line, None) is None:
+                NewUrl(self.root, self.list_of_saved_url, line, None)
         messagebox.showinfo(f'Done', f'New urls successfully added')
         self.refresh()
 
@@ -135,7 +140,7 @@ class WebCheckGUI(tkinter.Frame):
                 NewUrl(self.root, self.list_of_saved_url, url, unique_css)
                 messagebox.showinfo(f'Done', f'New url successfully added:\n{url}')
                 self.refresh()
-            except:
+            except Exception:
                 messagebox.showerror(title=None, message='Error!')
         elif not url.startswith(r'http'):
             messagebox.showerror('Error!', 'Incorrect format.\nUrl needs to start with http:// or https://')
@@ -182,6 +187,7 @@ class WebCheckGUI(tkinter.Frame):
 
     def modify_this_url(self):
         ModifyCssGUI(self.root, self.list_of_saved_url, self.mod_this_url, self.modify_css.get())
+        self.modify_css.set('')
         messagebox.showinfo(title='Done', message=f'{self.mod_this_url}\nNew css selected.')
 
     def delete_url_tab(self):
@@ -236,8 +242,71 @@ class WebCheckGUI(tkinter.Frame):
 
     def create_menu(self):
         menu = tkinter.Menu(self.master)
-        menu.add_command(label='About')
+
+        new_item = tkinter.Menu(menu, tearoff=0)
+        new_item.add_command(label='Reset url file', command=self.reset_url_file)
+        new_item.add_command(label='Create batch file', command=self.create_batch_file)
+        new_item.add_separator()
+        new_item.add_command(label='About', command=self.about_script)
+        new_item.add_separator()
+        new_item.add_command(label='Close', command=self.master.destroy)
+
+        menu.add_cascade(label='Options', menu=new_item)
         self.master.config(menu=menu)
+
+    def reset_url_file(self):
+        json_url_dict = {}
+        with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as f:
+            json.dump(json_url_dict, f)
+        logging.debug('New text file for json created')
+        with pathlib.Path(f'{self.root}\\url_list.txt').open('r') as file:
+            self.list_of_saved_url = json.load(file)
+        self.refresh()
+        messagebox.showinfo(title='Reset', message='Url file reset complete!')
+
+    def create_batch_file(self):
+        main_file = pathlib.Path(f'..\\main.py').resolve()
+
+        messagebox.showinfo(title='Where is it?', message='Path to python.exe in your virtual environment')
+        python_exe = tkinter.filedialog.askopenfilename(filetypes=(("exe file", "*.exe"), ("all files", "*.*")))
+        python_venv = pathlib.Path(python_exe).resolve()
+
+        working_directory = pathlib.Path.cwd().parents[0]
+
+        batch_file_location = tkinter.filedialog.askdirectory()
+        pathlib.Path(f'{batch_file_location}\\web_check.bat').open('w')
+        batch_file = pathlib.Path(f'{batch_file_location}\\web_check.bat')
+        data = f'cd "{working_directory}"\n"{python_venv}" "{main_file}"'
+        batch_file.write_text(data)
+
+        messagebox.showinfo(title='Done', message='Success!')
+
+    def about_script(self):
+        new_window = tkinter.Toplevel(self)
+        new_window.title('About...')
+        new_window.geometry('400x200')
+        new_window.resizable(False, False)
+        font = ('bahnschrift', 10)
+        script = 'Web check'
+        contact = 'Contact: https://github.com/Jaime-alv'
+        repository = 'Repository: https://github.com/Jaime-alv/web_check.git'
+        version = 'Version: v0.5.0'
+        license_script = 'License: APACHE LICENSE, VERSION 2.0'
+        author = 'Author: Jaime Álvarez Fernández'
+        script_label = tkinter.Label(new_window, text=script, font=('bahnschrift', 13, 'bold'))
+        script_label.pack(anchor='w', padx=10, pady=2)
+        contact_label = tkinter.Label(new_window, text=contact, font=font)
+        contact_label.pack(anchor='w', padx=10, pady=2)
+        repo_label = tkinter.Label(new_window, text=repository, font=font)
+        repo_label.pack(anchor='w', padx=10, pady=2)
+        version_label = tkinter.Label(new_window, text=version, font=font)
+        version_label.pack(anchor='w', padx=10, pady=2)
+        license_label = tkinter.Label(new_window, text=license_script, font=font)
+        license_label.pack(anchor='w', padx=10, pady=2)
+        author_label = tkinter.Label(new_window, text=author, font=font)
+        author_label.pack(anchor='w', padx=10, pady=2)
+        close_window = tkinter.Button(new_window, text='Ok', font=('bahnschrift', 12), command=new_window.destroy)
+        close_window.pack(pady=4)
 
 
 if __name__ == "__main__":
