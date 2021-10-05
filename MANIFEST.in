@@ -1,7 +1,7 @@
-
 include *.md
 include *.txt
 recursive-include image *
+recursive-include web_check *.py
 
 
 recursive-exclude storage *

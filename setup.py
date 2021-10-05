@@ -8,7 +8,7 @@ setup(
     version='v0.5.2',
     packages=find_packages(where='web_check'),
     package_dir={'': 'web_check'},
-    url='https://github.com/Jaime-alv',
+    url='https://github.com/Jaime-alv/web_check.git',
     license='GPL-3.0-or-later',
     long_description=long_description,
     long_description_content_type="text/markdown",
