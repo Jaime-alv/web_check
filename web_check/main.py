@@ -1,15 +1,28 @@
-# Copyright 2021 Jaime Álvarez Fernández
+# Web check; A simple script that will warn you when there are new content in your favourite websites.
+# Copyright (C) 2021 Jaime Álvarez Fernández
+# Contact: https://github.com/Jaime-alv
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# ==========================================================================
 import tkinter
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
 from PIL import ImageTk, Image
-from main import CompareUrl
-from add_url import *
+from web_check.checker import CompareUrl
+from web_check.add_url import *
 from tkscrolledframe import ScrolledFrame
-
-
-# font font=('bahnschrift', 13)
 
 
 class WebCheckGUI(tkinter.Frame):
@@ -56,7 +69,7 @@ class WebCheckGUI(tkinter.Frame):
         close_program.pack(side='bottom', anchor='e')
 
     def home(self):
-        image = Image.open('logo.png')
+        image = Image.open('../image/logo.png')
         img = ImageTk.PhotoImage(image)
         panel = tkinter.Label(self.tab_home, image=img)
         panel.image = img
@@ -67,7 +80,7 @@ class WebCheckGUI(tkinter.Frame):
         button_run_script['font'] = ('bahnschrift', 15, 'bold')
         button_run_script.pack(side='top', anchor='center', expand=1, ipadx=20, ipady=5)
         label_copyright = tkinter.Label(self.tab_home, font=('bahnschrift', 10), fg='#686565')
-        label_copyright['text'] = 'Copyright 2021 Jaime Álvarez Fernández'
+        label_copyright['text'] = 'Copyright (C) 2021 Jaime Álvarez Fernández'
         label_copyright.pack(side='bottom', anchor='s')
 
     def refresh(self):
@@ -265,13 +278,13 @@ class WebCheckGUI(tkinter.Frame):
         messagebox.showinfo(title='Reset', message='Url file reset complete!')
 
     def create_batch_file(self):
-        main_file = pathlib.Path(f'..\\main.py').resolve()
+        main_file = pathlib.Path(f'checker.py').resolve()
 
         messagebox.showinfo(title='Where is it?', message='Path to python.exe in your virtual environment')
         python_exe = tkinter.filedialog.askopenfilename(filetypes=(("exe file", "*.exe"), ("all files", "*.*")))
         python_venv = pathlib.Path(python_exe).resolve()
 
-        working_directory = pathlib.Path.cwd().parents[0]
+        working_directory = pathlib.Path.cwd()
 
         batch_file_location = tkinter.filedialog.askdirectory()
         pathlib.Path(f'{batch_file_location}\\web_check.bat').open('w')
@@ -290,8 +303,8 @@ class WebCheckGUI(tkinter.Frame):
         script = 'Web check'
         contact = 'Contact: https://github.com/Jaime-alv'
         repository = 'Repository: https://github.com/Jaime-alv/web_check.git'
-        version = 'Version: v0.5.1'
-        license_script = 'License: APACHE LICENSE, VERSION 2.0'
+        version = 'Version: v0.5.2'
+        license_script = 'License: GPL-3.0-or-later'
         author = 'Author: Jaime Álvarez Fernández'
         script_label = tkinter.Label(new_window, text=script, font=('bahnschrift', 13, 'bold'))
         script_label.pack(anchor='w', padx=10, pady=2)

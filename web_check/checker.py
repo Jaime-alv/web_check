@@ -1,4 +1,4 @@
-# Copyright 2021 Jaime Álvarez Fernández
+# Copyright (C) 2021 Jaime Álvarez Fernández
 import pathlib
 import bs4
 import requests
@@ -65,11 +65,11 @@ class CompareUrl:
 
 
 if __name__ == "__main__":
-    directory = 'storage'
+    directory = '..\\storage'
     try:
         logging.basicConfig(filename=f'{directory}\\logs\\log.txt', level=logging.DEBUG,
                             format='%(levelname)s - %(message)s')
-        pathlib.Path('storage\\logs\\log.txt').open('w')
+        pathlib.Path('../storage/logs/log.txt').open('w')
         with pathlib.Path(f'{directory}\\url_list.txt').open('r') as file:
             list_of_saved_url = json.load(file)
         if len(list_of_saved_url) == 0:

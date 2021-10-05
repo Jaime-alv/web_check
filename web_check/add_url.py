@@ -1,4 +1,4 @@
-# Copyright 2021 Jaime Álvarez Fernández
+# Copyright (C) 2021 Jaime Álvarez Fernández
 import re
 import pathlib
 import requests
@@ -131,9 +131,9 @@ class CreateFolder:
 
 if __name__ == "__main__":
     try:
-        logging.basicConfig(filename='..\\storage\\logs\\log.txt', level=logging.DEBUG,
+        logging.basicConfig(filename='../storage/logs/log.txt', level=logging.DEBUG,
                             format='%(levelname)s - %(message)s')
-        with pathlib.Path(f'..\\storage\\url_list.txt').open('r') as json_file:
+        with pathlib.Path(f'../storage/url_list.txt').open('r') as json_file:
             stored_url = json.load(json_file)
     except FileNotFoundError:
         CreateFolder('..\\storage')

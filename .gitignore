@@ -1,12 +1,13 @@
 # personal url list
 storage/
-test_list.txt
+tests/test_list.txt
 
 # pycharm files
 .idea/
+tests/
 
 # python cache
 __pycache__/
 
 # other files
-social_preview.jpg
+tests/social_preview.jpg
