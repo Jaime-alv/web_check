@@ -114,13 +114,15 @@ class WebCheckGUI(tkinter.Frame):
         lines = open_file.read_text().splitlines()
         url_plus_css = re.compile(r'(?P<url>.*?)(\s)(?P<css>.*)')
         for line in lines:
-            mo = url_plus_css.search(line)
-            if mo is not None:
+            if len(line.split(' ', maxsplit=1)) > 1:
+                mo = url_plus_css.search(line)
                 if mo.group('url').startswith(r'http') and self.list_of_saved_url.get(mo.group('url'), None) is None:
                     try:
                         NewUrl(self.root, self.list_of_saved_url, mo.group('url'), mo.group('css').strip())
                     except:
                         messagebox.showerror(title=None, message=f"Error with {mo.group('url')}!")
+            elif line.startswith(r'http') and self.list_of_saved_url.get(line, None) is None:
+                NewUrl(self.root, self.list_of_saved_url, line, None)
         messagebox.showinfo(f'Done', f'New urls successfully added')
         self.refresh()
 
@@ -182,6 +184,7 @@ class WebCheckGUI(tkinter.Frame):
 
     def modify_this_url(self):
         ModifyCssGUI(self.root, self.list_of_saved_url, self.mod_this_url, self.modify_css.get())
+        self.modify_css.set('')
         messagebox.showinfo(title='Done', message=f'{self.mod_this_url}\nNew css selected.')
 
     def delete_url_tab(self):
