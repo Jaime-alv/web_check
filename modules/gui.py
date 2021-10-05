@@ -3,6 +3,7 @@ import tkinter
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
+from PIL import ImageTk, Image
 from main import CompareUrl
 from add_url import *
 from tkscrolledframe import ScrolledFrame
@@ -55,15 +56,19 @@ class WebCheckGUI(tkinter.Frame):
         close_program.pack(side='bottom', anchor='e')
 
     def home(self):
-        label_logo = tkinter.Label(self.tab_home, text='Web check', font=('bahnschrift', 25, 'bold'))
-        label_logo.pack(anchor='center', expand=1)
+        image = Image.open('logo.png')
+        img = ImageTk.PhotoImage(image)
+        panel = tkinter.Label(self.tab_home, image=img)
+        panel.image = img
+        panel.pack(pady=20)
+
         button_run_script = tkinter.Button(self.tab_home, text='Run!')
         button_run_script['command'] = self.run_script
         button_run_script['font'] = ('bahnschrift', 15, 'bold')
-        button_run_script.pack(anchor='center', expand=1, ipadx=20, ipady=5)
+        button_run_script.pack(side='top', anchor='center', expand=1, ipadx=20, ipady=5)
         label_copyright = tkinter.Label(self.tab_home, font=('bahnschrift', 10), fg='#686565')
         label_copyright['text'] = 'Copyright 2021 Jaime Álvarez Fernández'
-        label_copyright.pack(side='bottom')
+        label_copyright.pack(side='bottom', anchor='s')
 
     def refresh(self):
         self.modify_css.set('')
