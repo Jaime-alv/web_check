@@ -23,11 +23,7 @@ class WebCheckGUI(tkinter.Frame):
         self.master.geometry('650x480')
         self.pack(expand=1, fill='both')
         self.master.title('web check')
-        self.label = tkinter.Label(self)
-        self.label['text'] = 'Web check'
-        self.label['font'] = ('bahnschrift', 15)
         self.for_delete = []
-        self.label.pack()
         self.tab_control = tkinter.ttk.Notebook(self)
         self.tab_home = ttk.Frame(self.tab_control)
         self.tab_add_url = ttk.Frame(self.tab_control)
@@ -48,10 +44,11 @@ class WebCheckGUI(tkinter.Frame):
         self.create_radio_button()
         self.delete_url_tab()
         self.create_check_button()
+        self.create_menu()
 
     def terminate(self):
         close_program = tkinter.Button(self, fg='red', command=self.master.destroy, font=('bahnschrift', 11))
-        close_program['text'] = 'Close program'
+        close_program['text'] = 'Close script'
         close_program['padx'] = 5
         close_program['pady'] = 5
         close_program.pack(side='bottom', anchor='e')
@@ -119,7 +116,7 @@ class WebCheckGUI(tkinter.Frame):
                 if mo.group('url').startswith(r'http') and self.list_of_saved_url.get(mo.group('url'), None) is None:
                     try:
                         NewUrl(self.root, self.list_of_saved_url, mo.group('url'), mo.group('css').strip())
-                    except:
+                    except Exception:
                         messagebox.showerror(title=None, message=f"Error with {mo.group('url')}!")
             elif line.startswith(r'http') and self.list_of_saved_url.get(line, None) is None:
                 NewUrl(self.root, self.list_of_saved_url, line, None)
@@ -137,7 +134,7 @@ class WebCheckGUI(tkinter.Frame):
                 NewUrl(self.root, self.list_of_saved_url, url, unique_css)
                 messagebox.showinfo(f'Done', f'New url successfully added:\n{url}')
                 self.refresh()
-            except:
+            except Exception:
                 messagebox.showerror(title=None, message='Error!')
         elif not url.startswith(r'http'):
             messagebox.showerror('Error!', 'Incorrect format.\nUrl needs to start with http:// or https://')
@@ -239,8 +236,48 @@ class WebCheckGUI(tkinter.Frame):
 
     def create_menu(self):
         menu = tkinter.Menu(self.master)
-        menu.add_command(label='About')
+
+        new_item = tkinter.Menu(menu, tearoff=0)
+        new_item.add_command(label='Reset url file', command=self.reset_url_file)
+        new_item.add_command(label='Create batch file', command=self.create_batch_file)
+        new_item.add_separator()
+        new_item.add_command(label='About', command=self.about_script)
+        new_item.add_separator()
+        new_item.add_command(label='Close', command=self.master.destroy)
+
+        menu.add_cascade(label='Options', menu=new_item)
         self.master.config(menu=menu)
+
+    def reset_url_file(self):
+        json_url_dict = {}
+        with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as f:
+            json.dump(json_url_dict, f)
+        logging.debug('New text file for json created')
+        with pathlib.Path(f'{self.root}\\url_list.txt').open('r') as file:
+            self.list_of_saved_url = json.load(file)
+        self.refresh()
+        messagebox.showinfo(title='Reset', message='Url file reset complete!')
+
+    def create_batch_file(self):
+        main_file = pathlib.Path(f'..\\main.py').resolve()
+
+        messagebox.showinfo(title='Where is it?', message='Path to python.exe in your virtual environment')
+        python_exe = tkinter.filedialog.askopenfilename(filetypes=(("exe file", "*.exe"), ("all files", "*.*")))
+        python_venv = pathlib.Path(python_exe).resolve()
+
+        working_directory = pathlib.Path.cwd().parents[0]
+
+        batch_file_location = tkinter.filedialog.askdirectory()
+        pathlib.Path(f'{batch_file_location}\\web_check.bat').open('w')
+        batch_file = pathlib.Path(f'{batch_file_location}\\web_check.bat')
+        data = f'cd "{working_directory}"\n"{python_venv}" "{main_file}"'
+        batch_file.write_text(data)
+
+        messagebox.showinfo(title='Done', message='Success!')
+
+    def about_script(self):
+        about_window = tkinter.Tk()
+        about_window.mainloop()
 
 
 if __name__ == "__main__":
