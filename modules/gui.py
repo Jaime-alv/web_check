@@ -290,7 +290,7 @@ class WebCheckGUI(tkinter.Frame):
         script = 'Web check'
         contact = 'Contact: https://github.com/Jaime-alv'
         repository = 'Repository: https://github.com/Jaime-alv/web_check.git'
-        version = 'Version: v0.5.0'
+        version = 'Version: v0.5.1'
         license_script = 'License: APACHE LICENSE, VERSION 2.0'
         author = 'Author: Jaime Álvarez Fernández'
         script_label = tkinter.Label(new_window, text=script, font=('bahnschrift', 13, 'bold'))
