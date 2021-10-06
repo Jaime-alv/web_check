@@ -1,14 +1,15 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
     name='Web_check',
-    version='v0.5.2.4',
+    version='v0.5.2.5',
     packages=['web_check', 'image'],
     data_files=[('image', ['image/logo.png'])],
-    package_data={'': ['requirements.txt'], },
+    package_data={'': ['requirements.txt']},
+    install_requires=['requests', 'beautifulsoup4', 'tkScrolledFrame', 'Pillow'],
     url='https://github.com/Jaime-alv/web_check.git',
     license='GPL-3.0-or-later',
     long_description=long_description,
