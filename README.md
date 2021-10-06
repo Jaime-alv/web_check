@@ -29,11 +29,19 @@ All urls are stored in a JSON file with all the needed information, including en
 - Install requirements.txt
 
     `pip install -r /path/to/requirements.txt`
-- Run modules/setup.py
 - Script is ready!
-
-# Automate the script
-You can run main.py whenever you want, but that's tedious and forgettable.
-
-### Batch file
-
+# Running the script
+Once everything is installed, launch the script with web_check/main.py. There are four tabs.
+- 'Home': it's the main tab. From here you can launch checker.py. Checker.py it's in charge of all the logic. It will access
+your stored url and compare it with the actual website.
+- 'Add url': From this tab, you can add a new url for checking, and its unique css selector. There is a second option, import file.
+Import file will let you select a .txt file with several url, and all of them will be stored.
+The txt file needs the structure: url(white space)css selector. One url per line. 
+- 'Modify url': If you need to change a url's css selector, you can do it from here. 
+- 'Delete url': Two options for deleting. Check one, or several, urls and hit delete. Delete all will delete all urls stored.
+At the options menu, it's possible to reset the url_list.txt if, for some reason, the file can't be read with 'reset url'.
+'Create batch file' will let automate the script, for faster use.
+### Automate the script
+You can run checker.py manually whenever you want, but that's tedious and forgettable.
+With 'Create batch file' you only have to point where python.exe is and a directory where the file will be created.
+After that, it's easier to run it directly or add the file to windows's task scheduler.

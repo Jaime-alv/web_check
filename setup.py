@@ -5,9 +5,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='Web_check',
-    version='v0.5.2',
-    packages=find_packages(where='web_check'),
-    package_dir={'': 'web_check'},
+    version='v0.5.2.3',
+    packages=['web_check', 'image'],
+    data_files=[('image', ['image/logo.png'])],
     url='https://github.com/Jaime-alv/web_check.git',
     license='GPL-3.0-or-later',
     long_description=long_description,
