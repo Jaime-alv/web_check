@@ -1,5 +1,5 @@
 # web check
- A simple script that will warn you when there are new content in your favourite websites.
+A script that will warn you, by opening a new browser tab, when there are new content in your favourite websites.
 
 ![logo](image/logo_new.png)
 
