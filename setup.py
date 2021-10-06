@@ -5,9 +5,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='Web_check',
-    version='v0.5.2.3',
+    version='v0.5.2.4',
     packages=['web_check', 'image'],
     data_files=[('image', ['image/logo.png'])],
+    package_data={'': ['requirements.txt'], },
     url='https://github.com/Jaime-alv/web_check.git',
     license='GPL-3.0-or-later',
     long_description=long_description,

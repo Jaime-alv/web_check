@@ -1,5 +1,6 @@
 include *.md
 include *.txt
+include *.toml
 recursive-include image *
 recursive-include web_check *.py
 
