@@ -41,15 +41,15 @@ Paste that in the css field in add url, or modify url.
 Once everything is installed, launch the script with web_check/main.py. There are four tabs.
 
 ![home](image/doc/home.png?raw=true)
-- 'Home': it's the main tab. From here you can launch checker.py with the button _Run!_. Checker.py it's in charge of all 
+- **Home**: it's the main tab. From here you can launch checker.py with the button _Run!_. Checker.py it's in charge of all 
 the logic. It will access your stored url and compare it with the actual website.
-- 'Add url': From this tab, you can add a new url for checking, and its unique css selector.
+- **Add url**: From this tab, you can add a new url for checking, and its unique css selector.
 
   **Important:** url have to start with _http://_ or _https://_. Hit _Submit new url_ and the script will make all
-necessary checks.
+  necessary checks.
 
   There is a second option, _Import file_.
-Import file will let you select a .txt file with several urls, and all of them will be stored.
+  Import file will let you select a .txt file with several urls, and all of them will be stored.
 
   The txt file needs to follow the structure: url(white space)css selector. One url per line.
   
@@ -59,9 +59,9 @@ Import file will let you select a .txt file with several urls, and all of them w
   
   `https://postal.fsc.ccoo.es/Inicio #divMainContent`
 
-- 'Modify url': If you need to change an url css selector, you can do it from here. Enter a new css selector, or leave it
+- **Modify url**: If you need to change an url css selector, you can do it from here. Enter a new css selector, or leave it
 empty for capturing the whole site, and hit _submit_.
-- 'Delete url': Two options for deleting. Check one, or several, urls and hit _delete_. _Delete all_ will delete all urls stored.
+- **Delete url**: Two options for deleting. Check one, or several, urls and hit _delete_. _Delete all_ will delete all urls stored.
 
 At the **Options**' menu, it's possible to reset the url_list.txt if, for some reason, the file can't be read with 'reset url'.
 'Create batch file' will let automate the script, for faster use.
