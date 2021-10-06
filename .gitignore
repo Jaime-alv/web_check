@@ -1,6 +1,5 @@
 # personal url list
 storage/
-tests/test_list.txt
 
 # pycharm files
 .idea/
@@ -9,5 +8,10 @@ tests/
 # python cache
 __pycache__/
 
+# PyPI
+Web_check.egg-info/
+dist/
+
 # other files
-tests/social_preview.jpg
+MANIFEST.in
+pyproject.toml
