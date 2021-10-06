@@ -20,8 +20,8 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
 from PIL import ImageTk, Image
-from web_check.checker import CompareUrl
-from web_check.add_url import *
+from checker import CompareUrl
+from add_url import *
 from tkscrolledframe import ScrolledFrame
 
 
@@ -287,10 +287,10 @@ class WebCheckGUI(tkinter.Frame):
 
         working_directory = pathlib.Path.cwd()
 
-        messagebox.showinfo(title='Where do I save it?', message='Path for saving web_check.bat')
+        messagebox.showinfo(title='Where do I save it?', message='Path for saving checker.bat')
         batch_file_location = tkinter.filedialog.askdirectory()
-        pathlib.Path(f'{batch_file_location}\\web_check.bat').open('w')
-        batch_file = pathlib.Path(f'{batch_file_location}\\web_check.bat')
+        pathlib.Path(f'{batch_file_location}\\checker.bat').open('w')
+        batch_file = pathlib.Path(f'{batch_file_location}\\checker.bat')
         data = f'cd "{working_directory}"\n"{python_venv}" "{main_file}"'
         batch_file.write_text(data)
 
