@@ -5,13 +5,14 @@
 
 # What it does
 The script will check, when run, if there are any changes in the websites. If any changes are found, it will open a new 
-browser tab.
+browser tab. 
 
 **Not every website can be scrap.**
 # How does it work?
-After adding an url the script creates a copy of website's content in your hard drive.
-When run again, it will compare the website against that stored content line by line, if there is any difference a new tab
+After adding an url, the script creates a copy of website's content in your hard drive.
+When run again, it will compare the website against that stored content line by line, if there are any differences a new tab
 will be open.
+**Note:** Script don't need to open browser when running, you'll only see the terminal.
 
 A lot of websites have some kind of calendar, that means, every day there will be changes in those websites. To avoid this, 
 you can add a unique css selector to each stored url. With this unique identification, the script targets only specific 
@@ -28,6 +29,7 @@ Paste that in the css field in add url, or modify url.
 
 # Set up
 - Install python from https://www.python.org/ (_built under python 3.9_)
+- Download repository [web_check.git](https://github.com/Jaime-alv/web_check.git)
 
 - Create a new virtual environment following the instructions in https://docs.python.org/3/library/venv.html
 
@@ -74,5 +76,6 @@ With 'Create batch file' you only have to point where python.exe is (the virtual
 the file will be created.
 
 After all, it's easier to run directly **web_check.bat** or add the batch file to windows' task scheduler.
+# 
 
 ###### Copyright (C) 2021 Jaime Álvarez Fernández
