@@ -1,11 +1,11 @@
-# web_check
+# web check
  A simple script that will warn you when there are new content in your favourite websites.
 
-# What it does?
+# What it does
 The script will check, when run, if there are any changes in the websites. If any changes are found, it will open a new 
 browser tab.
 
-Not every website can be scrap.
+**Not every website can be scrap.**
 # How does it work?
 After adding an url the script creates a copy of website's content in your hard drive.
 When run again, it will compare the website against that stored content line by line, if there is any difference a new tab
@@ -37,9 +37,14 @@ Paste that in the css field in add url, or modify url.
 - Script is ready!
 # Running the script
 Once everything is installed, launch the script with web_check/main.py. There are four tabs.
+
+![home](image\doc\home.png?raw=true)
 - 'Home': it's the main tab. From here you can launch checker.py. Checker.py it's in charge of all the logic. It will access
 your stored url and compare it with the actual website.
-- 'Add url': From this tab, you can add a new url for checking, and its unique css selector. There is a second option, import file.
+- 'Add url': From this tab, you can add a new url for checking, and its unique css selector.
+**Important note:** url have to start with _http://_ or _https://_
+
+  There is a second option, import file.
 Import file will let you select a .txt file with several url, and all of them will be stored.
 
   The txt file needs the structure: url(white space)css selector. One url per line.
