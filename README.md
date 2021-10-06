@@ -1,5 +1,5 @@
 # web_check
- A simple script that will warn you when there are new content in your preferred websites.
+ A simple script that will warn you when there are new content in your favourite websites.
 
 # What it does?
 The script will check, when run, if there are any changes in the websites. If any changes are found, it will open a new 
@@ -19,6 +19,11 @@ If there is a change, a new back up file will be created at storage/url_data/bac
 
 All urls are stored in a JSON file with all the needed information, including encoding.
 
+#### How to get the unique css selector
+Go to the website, right click in the zone you want the script to check. Go to inspect mode.
+Hover your mouse until you see (usually in blue) everything you want. Right click and copy selector.
+Paste that in the css field in add url, or modify url.
+
 # Set up
 - Install python from https://www.python.org/
 
@@ -36,12 +41,20 @@ Once everything is installed, launch the script with web_check/main.py. There ar
 your stored url and compare it with the actual website.
 - 'Add url': From this tab, you can add a new url for checking, and its unique css selector. There is a second option, import file.
 Import file will let you select a .txt file with several url, and all of them will be stored.
-The txt file needs the structure: url(white space)css selector. One url per line. 
-- 'Modify url': If you need to change a url's css selector, you can do it from here. 
+
+  The txt file needs the structure: url(white space)css selector. One url per line.
+  
+  `https://github.com/ body > div.application-main > div > div > div > div > div > main`
+  
+  `https://www.reddit.com/ #SHORTCUT_FOCUSABLE_DIV`
+  
+  `https://postal.fsc.ccoo.es/Inicio #divMainContent`
+
+- 'Modify url': If you need to change an url css selector, you can do it from here. 
 - 'Delete url': Two options for deleting. Check one, or several, urls and hit delete. Delete all will delete all urls stored.
-At the options menu, it's possible to reset the url_list.txt if, for some reason, the file can't be read with 'reset url'.
+At the options' menu, it's possible to reset the url_list.txt if, for some reason, the file can't be read with 'reset url'.
 'Create batch file' will let automate the script, for faster use.
 ### Automate the script
 You can run checker.py manually whenever you want, but that's tedious and forgettable.
 With 'Create batch file' you only have to point where python.exe is and a directory where the file will be created.
-After that, it's easier to run it directly or add the file to windows's task scheduler.
+After that, it's easier to run it directly or add the file to windows' task scheduler.
