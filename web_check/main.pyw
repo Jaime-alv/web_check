@@ -318,7 +318,7 @@ class WebCheckGUI(tkinter.Frame):
     def about_script(self):
         new_window = tkinter.Toplevel(self)
         new_window.title('About...')
-        new_window.geometry('400x200')
+        new_window.geometry('450x200')
         new_window.resizable(False, False)
         nw_ico = Image.open('../image/icon.png')
         nw_icon = ImageTk.PhotoImage(nw_ico)
@@ -330,20 +330,37 @@ class WebCheckGUI(tkinter.Frame):
         version = 'Version: v1.0.0'
         license_script = 'License: GPL-3.0-or-later'
         author = 'Author: Jaime Álvarez Fernández'
+
         script_label = tkinter.Label(new_window, text=script, font=('bahnschrift', 13, 'bold'))
-        script_label.pack(anchor='w', padx=10, pady=2)
-        contact_label = tkinter.Label(new_window, text=contact, font=font)
+        script_label.pack(padx=10, pady=2, side='top', anchor='w')
+
+        middle_frame = tkinter.Frame(new_window)
+        middle_frame.pack(anchor='center')
+        right_frame = tkinter.Frame(middle_frame)
+        right_frame.pack(side='right')
+        left_frame = tkinter.Frame(middle_frame)
+        left_frame.pack(side='left')
+
+        image = Image.open('../image/icon_bw.png')
+        image = image.resize((80, 80), Image.ANTIALIAS)
+        img = ImageTk.PhotoImage(image)
+        panel = tkinter.Label(left_frame, image=img)
+        panel.image = img
+        panel.pack(padx=10)
+
+        contact_label = tkinter.Label(right_frame, text=contact, font=font)
         contact_label.pack(anchor='w', padx=10, pady=2)
-        repo_label = tkinter.Label(new_window, text=repository, font=font)
+        repo_label = tkinter.Label(right_frame, text=repository, font=font)
         repo_label.pack(anchor='w', padx=10, pady=2)
-        version_label = tkinter.Label(new_window, text=version, font=font)
+        version_label = tkinter.Label(right_frame, text=version, font=font)
         version_label.pack(anchor='w', padx=10, pady=2)
-        license_label = tkinter.Label(new_window, text=license_script, font=font)
+        license_label = tkinter.Label(right_frame, text=license_script, font=font)
         license_label.pack(anchor='w', padx=10, pady=2)
-        author_label = tkinter.Label(new_window, text=author, font=font)
+        author_label = tkinter.Label(right_frame, text=author, font=font)
         author_label.pack(anchor='w', padx=10, pady=2)
+
         close_window = tkinter.Button(new_window, text='Ok', font=('bahnschrift', 12), command=new_window.destroy)
-        close_window.pack(pady=4)
+        close_window.pack(pady=4, anchor='s', side='bottom')
 
 
 if __name__ == "__main__":
