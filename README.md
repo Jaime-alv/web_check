@@ -40,7 +40,7 @@ Paste that in the css field in add url, or modify url.
     `pip install -r /path/to/requirements.txt`
 - Script is ready!
 # Running the script
-Once everything is installed, launch the script with web_check/main.py. There are four tabs.
+Once everything is installed, launch the script with web_check/main.pyw. There are four tabs.
 
 ![home](image/doc/home.png?raw=true)
 - **Home**: it's the main tab. From here you can launch checker.py with the button _Run!_. Checker.py it's in charge of all 
@@ -53,9 +53,10 @@ the logic. It will access your stored url and compare it with the actual website
   There is a second option, _Import file_.
   Import file will let you select a .txt file with several urls, and all of them will be stored.
 
-  The txt file needs to follow the structure: url(white space)css selector. One url per line.
+  The txt file needs to follow the structure: url(white space)css selector. Url only means script will download whole website. 
+Only one url per line.
   
-  `https://github.com/ body > div.application-main > div > div > div > div > div > main`
+  `https://github.com/`
   
   `https://www.reddit.com/ #SHORTCUT_FOCUSABLE_DIV`
   
