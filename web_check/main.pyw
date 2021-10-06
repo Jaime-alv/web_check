@@ -260,6 +260,7 @@ class WebCheckGUI(tkinter.Frame):
         new_item = tkinter.Menu(menu, tearoff=0)
         new_item.add_command(label='Reset url file', command=self.reset_url_file)
         new_item.add_command(label='Create batch file', command=self.create_batch_file)
+        new_item.add_command(label='Create shortcut', command=self.shortcut)
         new_item.add_separator()
         new_item.add_command(label='About', command=self.about_script)
         new_item.add_separator()
@@ -291,6 +292,24 @@ class WebCheckGUI(tkinter.Frame):
         batch_file_location = tkinter.filedialog.askdirectory()
         pathlib.Path(f'{batch_file_location}\\checker.bat').open('w')
         batch_file = pathlib.Path(f'{batch_file_location}\\checker.bat')
+        data = f'cd "{working_directory}"\n"{python_venv}" "{main_file}"'
+        batch_file.write_text(data)
+
+        messagebox.showinfo(title='Done', message='Success!')
+
+    def shortcut(self):
+        main_file = pathlib.Path(f'main.pyw').resolve()
+
+        messagebox.showinfo(title='Where is it?', message='Path to pythonw.exe in your virtual environment')
+        python_exe = tkinter.filedialog.askopenfilename(filetypes=(("exe file", "*.exe"), ("all files", "*.*")))
+        python_venv = pathlib.Path(python_exe).resolve()
+
+        working_directory = pathlib.Path.cwd()
+
+        messagebox.showinfo(title='Where do I save it?', message='Path for saving web_check.bat')
+        batch_file_location = tkinter.filedialog.askdirectory()
+        pathlib.Path(f'{batch_file_location}\\web_check.bat').open('w')
+        batch_file = pathlib.Path(f'{batch_file_location}\\web_check.bat')
         data = f'cd "{working_directory}"\n"{python_venv}" "{main_file}"'
         batch_file.write_text(data)
 
