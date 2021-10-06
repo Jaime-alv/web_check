@@ -69,7 +69,8 @@ class WebCheckGUI(tkinter.Frame):
         close_program.pack(side='bottom', anchor='e')
 
     def home(self):
-        image = Image.open('../image/logo.png')
+        image = Image.open('../image/logo_new.png')
+        image = image.resize((350, 200), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(image)
         panel = tkinter.Label(self.tab_home, image=img)
         panel.image = img
@@ -300,6 +301,9 @@ class WebCheckGUI(tkinter.Frame):
         new_window.title('About...')
         new_window.geometry('400x200')
         new_window.resizable(False, False)
+        nw_ico = Image.open('../image/icon.png')
+        nw_icon = ImageTk.PhotoImage(nw_ico)
+        new_window.wm_iconphoto(False, nw_icon)
         font = ('bahnschrift', 10)
         script = 'Web check'
         contact = 'Contact: https://github.com/Jaime-alv'
@@ -333,4 +337,7 @@ if __name__ == "__main__":
         CreateFolder(directory)
     window = tkinter.Tk()
     app = WebCheckGUI(window, directory)
+    ico = Image.open('../image/icon.png')
+    icon = ImageTk.PhotoImage(ico)
+    window.wm_iconphoto(False, icon)
     app.mainloop()
