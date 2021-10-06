@@ -76,6 +76,12 @@ With 'Create batch file' you only have to point where python.exe is (the virtual
 the file will be created.
 
 After all, it's easier to run directly **web_check.bat** or add the batch file to windows' task scheduler.
-# 
+
+### Log file
+Every time the script is run, script will output a log file. It clears its content automatically for easier reading.
+Any error, or info, will be written here.
+
+Log is located in _storage/logs/log.txt_. 
+
 
 ###### Copyright (C) 2021 Jaime Álvarez Fernández
