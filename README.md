@@ -17,7 +17,7 @@ A lot of websites have some kind of calendar, that means, every day there will b
 you can add a unique css selector to each stored url. With this unique identification, the script targets only specific 
 parts of the website, and avoid unnecessary calls to browser.
 
-If there is a change, a new back up file will be created at storage/url_data/backup
+If there is a change, a new back up file will be created at storage/url_data/backup.
 
 All urls are stored in a JSON file with all the needed information, including encoding.
 
@@ -27,7 +27,7 @@ Hover your mouse until you see (usually in blue) everything you want. Right clic
 Paste that in the css field in add url, or modify url.
 
 # Set up
-- Install python from https://www.python.org/
+- Install python from https://www.python.org/ (_built under python 3.9_)
 
 - Create a new virtual environment following the instructions in https://docs.python.org/3/library/venv.html
 
