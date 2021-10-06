@@ -68,7 +68,7 @@ if __name__ == "__main__":
     directory = '..\\storage'
     try:
         logging.basicConfig(filename=f'{directory}\\logs\\log.txt', level=logging.DEBUG,
-                            format='%(levelname)s - %(message)s')
+                            format='%(asctime)s - %(levelname)s - %(message)s')
         pathlib.Path('../storage/logs/log.txt').open('w')
         with pathlib.Path(f'{directory}\\url_list.txt').open('r') as file:
             list_of_saved_url = json.load(file)
