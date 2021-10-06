@@ -38,7 +38,7 @@ Paste that in the css field in add url, or modify url.
 # Running the script
 Once everything is installed, launch the script with web_check/main.py. There are four tabs.
 
-![home](image\doc\home.png?raw=true)
+![home](image/doc/home.png?raw=true)
 - 'Home': it's the main tab. From here you can launch checker.py. Checker.py it's in charge of all the logic. It will access
 your stored url and compare it with the actual website.
 - 'Add url': From this tab, you can add a new url for checking, and its unique css selector.
