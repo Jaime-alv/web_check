@@ -286,6 +286,7 @@ class WebCheckGUI(tkinter.Frame):
 
         working_directory = pathlib.Path.cwd()
 
+        messagebox.showinfo(title='Where do I save it?', message='Path for saving web_check.bat')
         batch_file_location = tkinter.filedialog.askdirectory()
         pathlib.Path(f'{batch_file_location}\\web_check.bat').open('w')
         batch_file = pathlib.Path(f'{batch_file_location}\\web_check.bat')
