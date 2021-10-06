@@ -15,3 +15,6 @@ dist/
 # other files
 MANIFEST.in
 pyproject.toml
+image/logo.png
+image/logo.psd
+image/icon.psd
