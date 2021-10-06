@@ -7,3 +7,4 @@ recursive-include web_check *.py
 
 recursive-exclude storage *
 recursive-exclude tests *
+recursive-exclude web_check/__pycache__ *
