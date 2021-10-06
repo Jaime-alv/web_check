@@ -308,7 +308,7 @@ class WebCheckGUI(tkinter.Frame):
         script = 'Web check'
         contact = 'Contact: https://github.com/Jaime-alv'
         repository = 'Repository: https://github.com/Jaime-alv/web_check.git'
-        version = 'Version: v0.5.2'
+        version = 'Version: v1.0.0'
         license_script = 'License: GPL-3.0-or-later'
         author = 'Author: Jaime Álvarez Fernández'
         script_label = tkinter.Label(new_window, text=script, font=('bahnschrift', 13, 'bold'))
@@ -331,13 +331,15 @@ if __name__ == "__main__":
     directory = '..\\storage'
     try:
         logging.basicConfig(filename=f'{directory}\\logs\\log.txt', level=logging.DEBUG,
-                            format='%(levelname)s - %(message)s')
+                            format='%(asctime)s - %(levelname)s - %(message)s')
         pathlib.Path(f'{directory}\\logs\\log.txt').open('w')
     except FileNotFoundError:
         CreateFolder(directory)
+    pil_logger = logging.getLogger('PIL')
+    pil_logger.setLevel(logging.INFO)
     window = tkinter.Tk()
-    app = WebCheckGUI(window, directory)
     ico = Image.open('../image/icon.png')
     icon = ImageTk.PhotoImage(ico)
+    app = WebCheckGUI(window, directory)
     window.wm_iconphoto(False, icon)
     app.mainloop()
