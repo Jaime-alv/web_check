@@ -22,13 +22,13 @@ class NewUrl:
             response = requests.get(self.url)
             pass_charset = response.headers['Content-Type']
             domain, header = self.domain_name()
-            enc_charset = get_charset(pass_charset)
+            enc_charset = self.get_charset(pass_charset)
 
             if header is None:
                 name = domain
             else:
                 name = domain + '_' + header
-
+            # create file with a unique name
             logging.warning(f'New file with name {name}.txt')
             additional_info = {}
             self.list_of_saved_url.setdefault(self.url, additional_info)
@@ -36,6 +36,7 @@ class NewUrl:
             self.list_of_saved_url[self.url].setdefault('encoding', enc_charset)
             logging.info(f"{name} with encoding {enc_charset}")
 
+            # only look at the hash
             if self.css_selector is not None:
                 new_file = pathlib.Path(f'{self.root}\\url_data\\{name}.txt').open('w', encoding=enc_charset)
                 self.list_of_saved_url[self.url].setdefault('css_selector', self.css_selector)
@@ -45,6 +46,7 @@ class NewUrl:
                 parsed_element = bs4_object.select(self.css_selector)
                 new_file.write(str(parsed_element[0].get_text()))
 
+            # save the whole url
             elif self.css_selector is None:
                 new_file = pathlib.Path(f'{self.root}\\url_data\\{name}.txt').open('wb')
                 self.list_of_saved_url[self.url].setdefault('css_selector', None)
@@ -59,74 +61,66 @@ class NewUrl:
             response = requests.get(self.url)
             logging.error(f"Response from request = {response}")
 
+    # create file name with different parts from the given url
     def domain_name(self):
         name = re.compile(r'(http(s)?://)?(www\.)?(?P<domain>.*)\.([a-zA-Z]+)(/(?P<header>[a-zA-Z_\-]+)(/.*)?)?')
         seek_name = name.search(self.url)
         return seek_name.group('domain'), seek_name.group('header')
 
-
-def get_charset(charset):
-    charset_pattern = re.compile(r'charset=(?P<charset>.*)')
-    search_charset = charset_pattern.search(charset)
-    return search_charset.group('charset')
-
-
-class ModifyCssGUI:
-    def __init__(self, root, list_of_saved_url, url, modify_css):
-        self.root = root
-        self.list_of_saved_url = list_of_saved_url
-        self.url = url
-        self.modify_css = modify_css
-
-        if self.modify_css != '':
-            self.modified_css = self.modify_css
-        else:
-            self.modified_css = None
-        logging.warning(f"New css selector for {self.list_of_saved_url[url]['file_name']}")
-        logging.info(f"old: {self.list_of_saved_url[url]['css_selector']}, new: {self.modify_css}")
-        self.list_of_saved_url[url]['css_selector'] = self.modified_css
-        with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as overwrite:
-            json.dump(self.list_of_saved_url, overwrite)
+    # get encoding from website
+    def get_charset(self, charset):
+        charset_pattern = re.compile(r'charset=(?P<charset>.*)')
+        search_charset = charset_pattern.search(charset)
+        return search_charset.group('charset')
 
 
-class DeleteUrlGUI:
-    def __init__(self, root, list_of_saved_url, for_delete):
-        self.root = root
-        self.list_of_saved_url = list_of_saved_url
-        self.for_delete = for_delete
-        for element in for_delete:
-            file_name = list_of_saved_url[element]['file_name']
-            file = pathlib.Path(f'{self.root}\\url_data\\{file_name}.txt')
-            backup_file = pathlib.Path(f'{self.root}\\url_data\\backup\\{file_name}_backup.txt')
-            pathlib.Path.unlink(file, missing_ok=True)
-            pathlib.Path.unlink(backup_file, missing_ok=True)
-            del self.list_of_saved_url[element]
-        with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as overwrite:
-            json.dump(self.list_of_saved_url, overwrite)
+# add new css for a saved url
+def modify_css_selector(root, list_of_saved_url, url, modify_css):
+    if modify_css != '':
+        modified_css = modify_css
+    else:
+        modified_css = None
+    logging.warning(f"New css selector for {list_of_saved_url[url]['file_name']}")
+    logging.info(f"old: {list_of_saved_url[url]['css_selector']}, new: {modify_css}")
+    list_of_saved_url[url]['css_selector'] = modified_css
+    with pathlib.Path(f'{root}\\url_list.txt').open('w') as overwrite:
+        json.dump(list_of_saved_url, overwrite)
 
 
-class CreateFolder:
-    def __init__(self, root):
-        self.root = root
-        if not pathlib.Path(f'{self.root}\\logs\\log.txt').exists():
-            pathlib.Path(f'{self.root}\\logs').mkdir(parents=True, exist_ok=True)
-            new_log = pathlib.Path(f'{self.root}\\logs\\log.txt').open('w')
-            new_log.close()
-            logging.warning('Log directory created')
+# delete a list of urls
+def delete_url(root, list_of_saved_url, for_delete):
+    for element in for_delete:
+        file_name = list_of_saved_url[element]['file_name']
+        file = pathlib.Path(f'{root}\\url_data\\{file_name}.txt')
+        backup_file = pathlib.Path(f'{root}\\url_data\\backup\\{file_name}_backup.txt')
+        pathlib.Path.unlink(file, missing_ok=True)
+        pathlib.Path.unlink(backup_file, missing_ok=True)
+        del list_of_saved_url[element]
+    with pathlib.Path(f'{root}\\url_list.txt').open('w') as overwrite:
+        json.dump(list_of_saved_url, overwrite)
 
-        if not pathlib.Path(f'{self.root}\\url_data').exists():
-            logging.error('No directory found')
-            pathlib.Path(f'{self.root}\\url_data').mkdir(parents=True, exist_ok=True)
-            pathlib.Path(f'{self.root}\\url_data\\backup').mkdir(parents=True, exist_ok=True)
-            logging.debug('directory created')
 
-        if not pathlib.Path(f'{self.root}\\url_list.txt').exists():
-            logging.error('No url_list.txt')
-            pathlib.Path(f'{self.root}\\url_list.txt').open('w')
-            json_url_dict = {}
-            with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as f:
-                json.dump(json_url_dict, f)
-            logging.debug('text file for json created')
+# where things will be stored
+def create_folder(root):
+    if not pathlib.Path(f'{root}\\logs\\log.txt').exists():
+        pathlib.Path(f'{root}\\logs').mkdir(parents=True, exist_ok=True)
+        new_log = pathlib.Path(f'{root}\\logs\\log.txt').open('w')
+        new_log.close()
+        logging.warning('Log directory created')
+
+    if not pathlib.Path(f'{root}\\url_data').exists():
+        logging.error('No directory found')
+        pathlib.Path(f'{root}\\url_data').mkdir(parents=True, exist_ok=True)
+        pathlib.Path(f'{root}\\url_data\\backup').mkdir(parents=True, exist_ok=True)
+        logging.debug('directory created')
+
+    if not pathlib.Path(f'{root}\\url_list.txt').exists():
+        logging.error('No url_list.txt')
+        pathlib.Path(f'{root}\\url_list.txt').open('w')
+        json_url_dict = {}
+        with pathlib.Path(f'{root}\\url_list.txt').open('w') as f:
+            json.dump(json_url_dict, f)
+        logging.debug('text file for json created')
 
 
 if __name__ == "__main__":
@@ -136,7 +130,7 @@ if __name__ == "__main__":
         with pathlib.Path(f'../storage/url_list.txt').open('r') as json_file:
             stored_url = json.load(json_file)
     except FileNotFoundError:
-        CreateFolder('..\\storage')
+        create_folder('..\\storage')
 
     print('Add desired url.')
     print('Url needs to start with http:// or https://')

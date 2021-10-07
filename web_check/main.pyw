@@ -39,6 +39,7 @@ class WebCheckGUI(tkinter.Frame):
         self.pack(expand=1, fill='both')
         self.master.title('web check')
         self.for_delete = []
+        # create the different tabs in the script
         self.tab_control = tkinter.ttk.Notebook(self)
         self.tab_home = ttk.Frame(self.tab_control)
         self.tab_add_url = ttk.Frame(self.tab_control)
@@ -51,6 +52,7 @@ class WebCheckGUI(tkinter.Frame):
         self.tab_control.pack(expand=1, fill='both')
         self.main()
 
+    # create everything
     def main(self):
         self.terminate()
         self.home()
@@ -84,6 +86,7 @@ class WebCheckGUI(tkinter.Frame):
         label_copyright['text'] = 'Copyright (C) 2021 Jaime Álvarez Fernández'
         label_copyright.pack(side='bottom', anchor='s')
 
+    # Update both, modify url and delete url, by destroying frames and calling again.
     def refresh(self):
         self.modify_css.set('')
         self.new_url_string.set('')
@@ -200,7 +203,7 @@ class WebCheckGUI(tkinter.Frame):
         self.mod_this_url = url
 
     def modify_this_url(self):
-        ModifyCssGUI(self.root, self.list_of_saved_url, self.mod_this_url, self.modify_css.get())
+        modify_css_selector(self.root, self.list_of_saved_url, self.mod_this_url, self.modify_css.get())
         self.modify_css.set('')
         messagebox.showinfo(title='Done', message=f'{self.mod_this_url}\nNew css selected.')
 
@@ -236,17 +239,18 @@ class WebCheckGUI(tkinter.Frame):
             pos += 1
 
     def delete_only(self):
-        DeleteUrlGUI(self.root, self.list_of_saved_url, self.for_delete)
+        delete_url(self.root, self.list_of_saved_url, self.for_delete)
         self.refresh()
         messagebox.showinfo(title='Delete', message='Done')
 
     def delete_all(self):
         for url in self.list_of_saved_url:
             self.for_delete.append(url)
-        DeleteUrlGUI(self.root, self.list_of_saved_url, self.for_delete)
+        delete_url(self.root, self.list_of_saved_url, self.for_delete)
         self.refresh()
         messagebox.showinfo(title='Delete', message='List clear')
 
+    # add to, or remove from, list for_delete the urls passed from create_check_button
     def del_this(self, i):
         order = sorted(self.list_of_saved_url)
         if self.true_false[i].get():
@@ -279,6 +283,7 @@ class WebCheckGUI(tkinter.Frame):
         self.refresh()
         messagebox.showinfo(title='Reset', message='Url file reset complete!')
 
+    # create a batch file for checker.py
     def create_batch_file(self):
         main_file = pathlib.Path(f'checker.py').resolve()
 
@@ -297,6 +302,7 @@ class WebCheckGUI(tkinter.Frame):
 
         messagebox.showinfo(title='Done', message='Success!')
 
+    # create a batch file for main.pyw
     def shortcut(self):
         main_file = pathlib.Path(f'main.pyw').resolve()
 
@@ -315,6 +321,7 @@ class WebCheckGUI(tkinter.Frame):
 
         messagebox.showinfo(title='Done', message='Success!')
 
+    # create a new window with all info about the script
     def about_script(self):
         new_window = tkinter.Toplevel(self)
         new_window.title('About...')
@@ -327,7 +334,7 @@ class WebCheckGUI(tkinter.Frame):
         script = 'Web check'
         contact = 'Contact: https://github.com/Jaime-alv'
         repository = 'Repository: https://github.com/Jaime-alv/web_check.git'
-        version = 'Version: v1.0.0'
+        version = 'Version: v1.0.1'
         license_script = 'License: GPL-3.0-or-later'
         author = 'Author: Jaime Álvarez Fernández'
 
@@ -370,7 +377,7 @@ if __name__ == "__main__":
                             format='%(asctime)s - %(levelname)s - %(message)s')
         pathlib.Path(f'{directory}\\logs\\log.txt').open('w')
     except FileNotFoundError:
-        CreateFolder(directory)
+        create_folder(directory)
     pil_logger = logging.getLogger('PIL')
     pil_logger.setLevel(logging.INFO)
     window = tkinter.Tk()
