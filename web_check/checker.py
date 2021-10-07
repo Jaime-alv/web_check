@@ -13,6 +13,7 @@ class CompareUrl:
     def __init__(self, root, stored_url):
         self.root = root
         self.list_of_saved_url = stored_url
+        # iterate through all saved urls in url_list.txt
         for each_url in self.list_of_saved_url:
             self.file_name = self.list_of_saved_url[each_url]['file_name']
             self.css_selector = self.list_of_saved_url[each_url]['css_selector']
@@ -24,6 +25,7 @@ class CompareUrl:
             logging.info(f'selector = {self.css_selector}')
             self.compare_url()
 
+    # new temp file for comparing websites
     def compare_url(self):
         new_url = requests.get(self.url)
         if self.css_selector is not None:
@@ -45,6 +47,7 @@ class CompareUrl:
             webbrowser.open(self.url)
             self.save_url()
 
+    # update stored file with new text and create backup with old text
     def save_url(self):
         logging.warning(f'Updating file with {self.url} in {self.path}')
         shutil.move(self.path, f'{self.root}\\url_data\\backup\\{self.file_name}_backup.txt')

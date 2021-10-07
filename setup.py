@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='Web_check',
-    version='v1.0.0',
+    version='v1.0.1',
     packages=['web_check', 'image'],
     data_files=[('image', ['image/logo.png'])],
     package_data={'': ['requirements.txt']},
