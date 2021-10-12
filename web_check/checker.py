@@ -28,29 +28,43 @@ class CompareUrl:
     # new temp file for comparing websites
     def compare_url(self):
         new_url = requests.get(self.url)
+
         if self.css_selector is not None:
-            temp_file = pathlib.Path(f'{self.root}\\temp.txt').open('w', encoding=self.charset)
+            self.temp_file = pathlib.Path(f'{self.root}\\temp.txt').open('w', encoding=self.charset)
             bs4_object = bs4.BeautifulSoup(new_url.text, features="html.parser")
             parsed_element = bs4_object.select(self.css_selector)
-            temp_file.write(str(parsed_element[0].get_text()))
-            temp_file.close()
+            self.temp_file.write(str(parsed_element[0].get_text()))
+            self.temp_file.close()
+
         elif self.css_selector is None:
-            temp_file = pathlib.Path(f'{self.root}\\temp.txt').open('wb')
+            self.temp_file = pathlib.Path(f'{self.root}\\temp.txt').open('wb')
             for chunk in new_url.iter_content(10000):
-                temp_file.write(chunk)
-            temp_file.close()
+                self.temp_file.write(chunk)
+            self.temp_file.close()
+
         compare_files = filecmp.cmp(f'{self.root}\\temp.txt', self.path, shallow=False)
         if compare_files:
             logging.warning(f"{self.url} Equal to stored one")
         elif not compare_files:
             logging.critical(f'Opening {self.url}. Differences found.')
             webbrowser.open(self.url)
+            # todo: prompt differences in terminal
             self.save_url()
+
+    def prompt_differences(self):
+        new_file = pathlib.Path(f'{self.root}\\temp.txt').open('r')
+        new_file_by_line = new_file.readlines()
+        old_file = pathlib.Path(f'{self.root}\\url_data\\{self.file_name}.txt').open('r')
+        old_file_by_line = old_file.readlines()
+        for line in new_file_by_line:
+            if line not in old_file_by_line:
+                print(line)
 
     # update stored file with new text and create backup with old text
     def save_url(self):
         logging.warning(f'Updating file with {self.url} in {self.path}')
         shutil.move(self.path, f'{self.root}\\url_data\\backup\\{self.file_name}_backup.txt')
+
         if self.css_selector is not None:
             new_url = requests.get(self.url)
             open_old_url = pathlib.Path(self.path).open('w', encoding=self.charset)
@@ -77,6 +91,7 @@ if __name__ == "__main__":
             list_of_saved_url = json.load(file)
         if len(list_of_saved_url) == 0:
             print('List is empty')
+            input()
         else:
             logging.debug(pathlib.Path.cwd())
             logging.debug('main function')
@@ -84,4 +99,4 @@ if __name__ == "__main__":
             CompareUrl(directory, list_of_saved_url)
     except FileNotFoundError:
         logging.error('Run main script first!')
-
+        input()
