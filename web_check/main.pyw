@@ -70,6 +70,7 @@ class WebCheckGUI(tkinter.Frame):
         close_program['pady'] = 5
         close_program.pack(side='bottom', anchor='e')
 
+    # create home tab
     def home(self):
         image = Image.open('../image/logo_new.png')
         image = image.resize((350, 200), Image.ANTIALIAS)
@@ -101,10 +102,44 @@ class WebCheckGUI(tkinter.Frame):
     def run_script(self):
         if len(self.list_of_saved_url) > 0:
             CompareUrl('..\\storage', self.list_of_saved_url)
-            messagebox.showinfo('Done', 'All checks done!')
+            self.whats_new_file = pathlib.Path(f'{self.root}\\logs\\whats_new.txt')
+            with self.whats_new_file.open('r') as file:
+                # If there are more than 1 line in whats_new.txt, there are some changes that needs to be printed
+                if len(file.readlines()) > 1:
+                    self.whats_new()
+                else:
+                    messagebox.showinfo('Done', 'All checks done!')
         else:
             messagebox.showerror('Error!', 'List is empty!')
 
+    # create a new window for displaying changes
+    def whats_new(self):
+        line_by_line = self.whats_new_file.open('r', encoding='utf-8').readlines()
+        whats_new_window = tkinter.Toplevel(self)
+        whats_new_window.title("What's new today?")
+        nw_ico = Image.open('../image/icon_bw.png')
+        nw_icon = ImageTk.PhotoImage(nw_ico)
+        whats_new_window.wm_iconphoto(False, nw_icon)
+
+        scroll_whats_new = ScrolledFrame(whats_new_window, width=450, height=250)
+        scroll_whats_new.pack(side="top", expand=1, fill="both")
+        scroll_whats_new.bind_arrow_keys(whats_new_window)
+        scroll_whats_new.bind_scroll_wheel(whats_new_window)
+        whats_new_frame = scroll_whats_new.display_widget(tkinter.Frame)
+
+        for i in range(1, len(line_by_line)):
+            if line_by_line[i].startswith(r'- http'):
+                header = tkinter.Label(whats_new_frame, text=line_by_line[i], font=('bahnschrift', 10, 'bold'))
+                header.pack(anchor='w')
+            else:
+                content = tkinter.Label(whats_new_frame, text=line_by_line[i], font=('bahnschrift', 10))
+                content.pack(anchor='w', padx=10)
+
+        close_window = tkinter.Button(whats_new_window, text='Close', command=whats_new_window.destroy,
+                                      font=('bahnschrift', 12))
+        close_window.pack(pady=4, side='bottom', anchor='s')
+
+    # create add url tab
     def add_url(self):
         self.new_url_string = tkinter.StringVar()
         self.new_url_css = tkinter.StringVar()
@@ -164,6 +199,7 @@ class WebCheckGUI(tkinter.Frame):
         else:
             messagebox.showwarning('Duplicate', f'{url}\nAlready stored in url_list.txt')
 
+    # create modify url tab
     def modify_url(self):
         label_modify_css = tkinter.Label(self.tab_modify_url, text='Introduce new css:', font=('bahnschrift', 11))
         label_modify_css.pack(side='top', anchor='w', padx=10)
@@ -207,6 +243,7 @@ class WebCheckGUI(tkinter.Frame):
         self.modify_css.set('')
         messagebox.showinfo(title='Done', message=f'{self.mod_this_url}\nNew css selected.')
 
+    # create delete tab
     def delete_url_tab(self):
         label_delete = tkinter.Label(self.tab_delete_url, text='Check url:', font=('bahnschrift', 11))
         label_delete.pack(side='top', anchor='w', padx=10)
@@ -250,7 +287,7 @@ class WebCheckGUI(tkinter.Frame):
         self.refresh()
         messagebox.showinfo(title='Delete', message='List clear')
 
-    # add to, or remove from, list for_delete the urls passed from create_check_button
+    # add to, or remove from, list 'for_delete' the urls passed from create_check_button
     def del_this(self, i):
         order = sorted(self.list_of_saved_url)
         if self.true_false[i].get():
@@ -273,6 +310,7 @@ class WebCheckGUI(tkinter.Frame):
         menu.add_cascade(label='Options', menu=new_item)
         self.master.config(menu=menu)
 
+    # re-write url_list.txt completely empty
     def reset_url_file(self):
         json_url_dict = {}
         with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as f:
@@ -334,7 +372,7 @@ class WebCheckGUI(tkinter.Frame):
         script = 'Web check'
         contact = 'Contact: https://github.com/Jaime-alv'
         repository = 'Repository: https://github.com/Jaime-alv/web_check.git'
-        version = 'Version: v1.0.1'
+        version = 'Version: v1.1.0'
         license_script = 'License: GPL-3.0-or-later'
         author = 'Author: Jaime Álvarez Fernández'
 
