@@ -18,7 +18,7 @@ class CompareUrl:
         today = datetime.date.today()
         today_format = today.strftime('%d/%m/%Y')
         with self.whats_new.open('w') as clear:
-            clear.write(f'Today is {today_format}.')
+            clear.write(f'Today is {today_format}.\n')
         # iterate through all saved urls in url_list.txt
         for each_url in self.list_of_saved_url:
             self.file_name = self.list_of_saved_url[each_url]['file_name']
