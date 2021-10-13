@@ -7,6 +7,7 @@ import filecmp
 import json
 import logging
 import shutil
+import datetime
 
 
 class CompareUrl:
@@ -14,8 +15,10 @@ class CompareUrl:
         self.root = root
         self.list_of_saved_url = stored_url
         self.whats_new = pathlib.Path(f'{self.root}\\logs\\whats_new.txt')
+        today = datetime.date.today()
+        today_format = today.strftime('%d/%m/%Y')
         with self.whats_new.open('w') as clear:
-            clear.write('')
+            clear.write(f'Today is {today_format}.')
         # iterate through all saved urls in url_list.txt
         for each_url in self.list_of_saved_url:
             self.file_name = self.list_of_saved_url[each_url]['file_name']
