@@ -70,6 +70,7 @@ class WebCheckGUI(tkinter.Frame):
         close_program['pady'] = 5
         close_program.pack(side='bottom', anchor='e')
 
+    # create home tab
     def home(self):
         image = Image.open('../image/logo_new.png')
         image = image.resize((350, 200), Image.ANTIALIAS)
@@ -138,6 +139,7 @@ class WebCheckGUI(tkinter.Frame):
                                       font=('bahnschrift', 12))
         close_window.pack(pady=4, side='bottom', anchor='s')
 
+    # create add url tab
     def add_url(self):
         self.new_url_string = tkinter.StringVar()
         self.new_url_css = tkinter.StringVar()
@@ -197,6 +199,7 @@ class WebCheckGUI(tkinter.Frame):
         else:
             messagebox.showwarning('Duplicate', f'{url}\nAlready stored in url_list.txt')
 
+    # create modify url tab
     def modify_url(self):
         label_modify_css = tkinter.Label(self.tab_modify_url, text='Introduce new css:', font=('bahnschrift', 11))
         label_modify_css.pack(side='top', anchor='w', padx=10)
@@ -240,6 +243,7 @@ class WebCheckGUI(tkinter.Frame):
         self.modify_css.set('')
         messagebox.showinfo(title='Done', message=f'{self.mod_this_url}\nNew css selected.')
 
+    # create delete tab
     def delete_url_tab(self):
         label_delete = tkinter.Label(self.tab_delete_url, text='Check url:', font=('bahnschrift', 11))
         label_delete.pack(side='top', anchor='w', padx=10)
@@ -283,7 +287,7 @@ class WebCheckGUI(tkinter.Frame):
         self.refresh()
         messagebox.showinfo(title='Delete', message='List clear')
 
-    # add to, or remove from, list for_delete the urls passed from create_check_button
+    # add to, or remove from, list 'for_delete' the urls passed from create_check_button
     def del_this(self, i):
         order = sorted(self.list_of_saved_url)
         if self.true_false[i].get():
@@ -306,6 +310,7 @@ class WebCheckGUI(tkinter.Frame):
         menu.add_cascade(label='Options', menu=new_item)
         self.master.config(menu=menu)
 
+    # re-write url_list.txt completely empty
     def reset_url_file(self):
         json_url_dict = {}
         with pathlib.Path(f'{self.root}\\url_list.txt').open('w') as f:
