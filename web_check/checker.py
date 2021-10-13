@@ -30,19 +30,19 @@ class CompareUrl:
         new_url = requests.get(self.url)
 
         if self.css_selector is not None:
-            self.temp_file = pathlib.Path(f'{self.root}\\temp.txt').open('w', encoding=self.charset)
+            self.temp_file = pathlib.Path(f'{self.root}\\url_data\\temp.txt').open('w', encoding=self.charset)
             bs4_object = bs4.BeautifulSoup(new_url.text, features="html.parser")
             parsed_element = bs4_object.select(self.css_selector)
             self.temp_file.write(str(parsed_element[0].get_text()))
             self.temp_file.close()
 
         elif self.css_selector is None:
-            self.temp_file = pathlib.Path(f'{self.root}\\temp.txt').open('wb')
+            self.temp_file = pathlib.Path(f'{self.root}\\url_data\\temp.txt').open('wb')
             for chunk in new_url.iter_content(10000):
                 self.temp_file.write(chunk)
             self.temp_file.close()
 
-        compare_files = filecmp.cmp(f'{self.root}\\temp.txt', self.path, shallow=False)
+        compare_files = filecmp.cmp(f'{self.root}\\url_data\\temp.txt', self.path, shallow=False)
         if compare_files:
             logging.warning(f"{self.url} Equal to stored one")
         elif not compare_files:
@@ -52,7 +52,7 @@ class CompareUrl:
             self.save_url()
 
     def prompt_differences(self):
-        new_file = pathlib.Path(f'{self.root}\\temp.txt').open('r')
+        new_file = pathlib.Path(f'{self.root}\\url_data\\temp.txt').open('r')
         new_file_by_line = new_file.readlines()
         old_file = pathlib.Path(f'{self.root}\\url_data\\{self.file_name}.txt').open('r')
         old_file_by_line = old_file.readlines()
@@ -64,6 +64,8 @@ class CompareUrl:
     def save_url(self):
         logging.warning(f'Updating file with {self.url} in {self.path}')
         shutil.move(self.path, f'{self.root}\\url_data\\backup\\{self.file_name}_backup.txt')
+        backup = pathlib.Path(f'{self.root}\\url_data\\backup\\{self.file_name}_backup.txt').open('r')
+        backup.close()
 
         if self.css_selector is not None:
             new_url = requests.get(self.url)
