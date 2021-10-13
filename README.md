@@ -12,7 +12,7 @@ browser tab.
 After adding an url, the script creates a copy of website's content in your hard drive.
 When run again, it will compare the website against the cached one line by line,and if there are any differences, a new tab
 will open.
-**Note:** Script don't need to open browser when running, you'll only see the terminal.
+**Note:** Script doesn't need to open browser when running, you'll only see the terminal.
 
 A lot of websites have some kind of calendar, that means, every day there will be changes in those websites. To avoid this, 
 you can add a unique css selector to each url. With this unique identification, the script targets only specific 
