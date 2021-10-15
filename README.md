@@ -44,13 +44,18 @@ Once everything is installed, launch the script with web_check/main.pyw.
 
 There are four tabs.
 
-![home](image/doc/home.png?raw=true)
+
 - **Home**: it's the main tab. From here you can launch checker.py with the button _Run!_. Checker.py it's in charge of all 
 the logic. It will access your stored url and compare it with the actual website.
+
+![home](image/doc/home.png?raw=true)
+
 - **Add url**: From this tab, you can add a new url for checking, and its unique css selector.
 
   **Important:** urls have to start with _http://_ or _https://_. Hit _Submit new url_ and the script will make all
   necessary checks.
+
+![add url](image/doc/add_url.png)
 
   There is a second option, _Import file_.
   Import file will let you select a .txt file with several urls, and all of them will be saved.
@@ -68,7 +73,12 @@ Only one url per line.
 
 - **Modify url**: If you need to change an url css selector, you can do it from here. Enter a new css selector, or leave it
 empty for capturing the whole site, and hit _submit_.
+
+![modify url](image/doc/mod_url.png)
+
 - **Delete url**: Two options for deleting. Check one, or several, urls and hit _delete_. _Delete all_ will delete all urls stored.
+
+![delete url](image/doc/del_url.png)
 
 At the **Options**' menu, it's possible to reset the _url_list.txt_ if, for some reason, the file can't be read.
 
@@ -90,6 +100,7 @@ and the virtual environment. It let you run main.pyw with only a double click.
 Now you don't need to activate each time a venv, web_check.bat will take care of it.
 
 ### What's new in your favourite websites
+![what's new](image/doc/whats_new.png)
 Inside logs folder there are two files. _whats_new.txt_ displays all the changes in your favourite websites. Each url starts
 with a hyphen for easier readability.
 
