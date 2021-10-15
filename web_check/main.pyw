@@ -127,8 +127,7 @@ class WebCheckGUI(tkinter.Frame):
 
         for i in range(1, len(line_by_line)):
             if line_by_line[i].startswith(r'- http'):
-                header = tkinter.Label(whats_new_frame, text=line_by_line[i],
-                                       font=('bahnschrift underline', 10, 'bold'))
+                header = tkinter.Label(whats_new_frame, text=line_by_line[i], font=('bahnschrift', 10, 'bold'))
                 header.pack(anchor='w')
             else:
                 content = tkinter.Label(whats_new_frame, text=line_by_line[i], font=('bahnschrift', 10))
@@ -383,8 +382,7 @@ class WebCheckGUI(tkinter.Frame):
         left_frame = tkinter.Frame(middle_frame)
         left_frame.pack(side='left')
 
-        image = Image.open('../image/icon_bw.png')
-        image = image.resize((80, 80), Image.ANTIALIAS)
+        image = ico.resize((80, 80), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(image)
         panel = tkinter.Label(left_frame, image=img)
         panel.image = img
