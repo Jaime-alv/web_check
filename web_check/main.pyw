@@ -25,8 +25,6 @@ from add_url import *
 from tkscrolledframe import ScrolledFrame
 
 
-
-
 class WebCheckGUI(tkinter.Frame):
     def __init__(self, master, root):
         super().__init__(master)
@@ -129,7 +127,8 @@ class WebCheckGUI(tkinter.Frame):
 
         for i in range(1, len(line_by_line)):
             if line_by_line[i].startswith(r'- http'):
-                header = tkinter.Label(whats_new_frame, text=line_by_line[i], font=('bahnschrift underline', 10, 'bold'))
+                header = tkinter.Label(whats_new_frame, text=line_by_line[i],
+                                       font=('bahnschrift underline', 10, 'bold'))
                 header.pack(anchor='w')
             else:
                 content = tkinter.Label(whats_new_frame, text=line_by_line[i], font=('bahnschrift', 10))
