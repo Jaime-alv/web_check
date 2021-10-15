@@ -25,6 +25,8 @@ from add_url import *
 from tkscrolledframe import ScrolledFrame
 
 
+
+
 class WebCheckGUI(tkinter.Frame):
     def __init__(self, master, root):
         super().__init__(master)
@@ -117,9 +119,7 @@ class WebCheckGUI(tkinter.Frame):
         line_by_line = self.whats_new_file.open('r', encoding='utf-8').readlines()
         whats_new_window = tkinter.Toplevel(self)
         whats_new_window.title("What's new today?")
-        nw_ico = Image.open('../image/icon_bw.png')
-        nw_icon = ImageTk.PhotoImage(nw_ico)
-        whats_new_window.wm_iconphoto(False, nw_icon)
+        whats_new_window.wm_iconphoto(False, icon)
 
         scroll_whats_new = ScrolledFrame(whats_new_window, width=450, height=250)
         scroll_whats_new.pack(side="top", expand=1, fill="both")
@@ -129,7 +129,7 @@ class WebCheckGUI(tkinter.Frame):
 
         for i in range(1, len(line_by_line)):
             if line_by_line[i].startswith(r'- http'):
-                header = tkinter.Label(whats_new_frame, text=line_by_line[i], font=('bahnschrift', 10, 'bold'))
+                header = tkinter.Label(whats_new_frame, text=line_by_line[i], font=('bahnschrift underline', 10, 'bold'))
                 header.pack(anchor='w')
             else:
                 content = tkinter.Label(whats_new_frame, text=line_by_line[i], font=('bahnschrift', 10))
@@ -365,9 +365,7 @@ class WebCheckGUI(tkinter.Frame):
         new_window.title('About...')
         new_window.geometry('450x200')
         new_window.resizable(False, False)
-        nw_ico = Image.open('../image/icon_bw.png')
-        nw_icon = ImageTk.PhotoImage(nw_ico)
-        new_window.wm_iconphoto(False, nw_icon)
+        new_window.wm_iconphoto(False, icon)
         font = ('bahnschrift', 10)
         script = 'Web check'
         contact = 'Contact: https://github.com/Jaime-alv'
@@ -405,7 +403,7 @@ class WebCheckGUI(tkinter.Frame):
         author_label.pack(anchor='w', padx=10, pady=2)
 
         close_window = tkinter.Button(new_window, text='Ok', font=('bahnschrift', 12), command=new_window.destroy)
-        close_window.pack(pady=4, anchor='s', side='bottom')
+        close_window.pack(pady=4, anchor='s', side='bottom', ipadx=33)
 
 
 if __name__ == "__main__":
@@ -419,8 +417,8 @@ if __name__ == "__main__":
     pil_logger = logging.getLogger('PIL')
     pil_logger.setLevel(logging.INFO)
     window = tkinter.Tk()
+    app = WebCheckGUI(window, directory)
     ico = Image.open('../image/icon_bw.png')
     icon = ImageTk.PhotoImage(ico)
-    app = WebCheckGUI(window, directory)
     window.wm_iconphoto(False, icon)
     app.mainloop()
