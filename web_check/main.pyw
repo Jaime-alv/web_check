@@ -1,6 +1,7 @@
-# Web check; A simple script that will warn you when there are new content in your favourite websites.
-# Copyright (C) 2021 Jaime Álvarez Fernández
-# Contact: https://github.com/Jaime-alv
+# Web check
+# A simple script that will warn you when there are new content in your favourite websites.
+# Copyright (C) 2021 Jaime Alvarez Fernandez
+# Contact: jaime.af.git@gmail.com
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -366,7 +367,7 @@ class WebCheckGUI(tkinter.Frame):
         new_window.wm_iconphoto(False, icon)
         font = ('bahnschrift', 10)
         script = 'Web check'
-        contact = 'Contact: https://github.com/Jaime-alv'
+        contact = 'Contact: jaime.af.git@gmail.com'
         repository = 'Repository: https://github.com/Jaime-alv/web_check.git'
         version = 'Version: v1.1.0'
         license_script = 'License: GPL-3.0-or-later'
