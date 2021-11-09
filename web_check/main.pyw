@@ -20,28 +20,33 @@ import tkinter
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
-from PIL import ImageTk, Image
 from checker import CompareUrl
 from add_url import *
 from tkscrolledframe import ScrolledFrame
 
 
-class WebCheckGUI(tkinter.Frame):
-    def __init__(self, master, root):
-        super().__init__(master)
+class WebCheckGUI(tkinter.Tk):
+    def __init__(self, root):
+        super().__init__()
         self.root = root
         with pathlib.Path(f'{self.root}\\url_list.txt').open('r') as file:
             self.list_of_saved_url = json.load(file)
         style = tkinter.ttk.Style()
         style.configure('TNotebook.Tab', font=('bahnschrift', 13))
         style.configure('TNotebook', font=('bahnschrift', 10))
-        self.master = master
-        self.master.geometry('650x480')
-        self.pack(expand=1, fill='both')
-        self.master.title('web check')
+        icon_file = pathlib.Path('../image/icon_bw.png')
+        background_image = pathlib.Path('../image/logo.png')
+        self.icon = tkinter.PhotoImage(file=icon_file)
+        self.logo = tkinter.PhotoImage(file=background_image)
+        self.master_frame = tkinter.Frame(self)
+        self.wm_iconphoto(False, self.icon)
+        self.title('web check')
+        self.master_frame.pack(expand=1, fill='both')
+        self.minsize(width=400, height=480)
         self.for_delete = []
+
         # create the different tabs in the script
-        self.tab_control = tkinter.ttk.Notebook(self)
+        self.tab_control = tkinter.ttk.Notebook(self.master_frame)
         self.tab_home = ttk.Frame(self.tab_control)
         self.tab_add_url = ttk.Frame(self.tab_control)
         self.tab_modify_url = ttk.Frame(self.tab_control)
@@ -51,6 +56,7 @@ class WebCheckGUI(tkinter.Frame):
         self.tab_control.add(self.tab_modify_url, text='Modify url')
         self.tab_control.add(self.tab_delete_url, text='Delete url')
         self.tab_control.pack(expand=1, fill='both')
+
         self.main()
 
     # create everything
@@ -65,25 +71,20 @@ class WebCheckGUI(tkinter.Frame):
         self.create_menu()
 
     def terminate(self):
-        close_program = tkinter.Button(self, fg='red', command=self.master.destroy, font=('bahnschrift', 11))
-        close_program['text'] = 'Close script'
-        close_program['padx'] = 5
-        close_program['pady'] = 5
-        close_program.pack(side='bottom', anchor='e')
+        close_program = tkinter.Button(self.master_frame, fg='red', text='Close', command=self.destroy,
+                                       font=('bahnschrift', 11))
+        close_program.pack(side='bottom', anchor='e', padx=3, pady=3)
 
     # create home tab
     def home(self):
-        image = Image.open('../image/logo_new.png')
-        image = image.resize((350, 200), Image.ANTIALIAS)
-        img = ImageTk.PhotoImage(image)
-        panel = tkinter.Label(self.tab_home, image=img)
-        panel.image = img
+        panel = tkinter.Label(self.tab_home, image=self.logo)
+        panel.image = self.logo
         panel.pack(pady=20)
 
-        button_run_script = tkinter.Button(self.tab_home, text='Run!')
+        button_run_script = tkinter.Button(self.tab_home, text='Run!', width=6)
         button_run_script['command'] = self.run_script
         button_run_script['font'] = ('bahnschrift', 15, 'bold')
-        button_run_script.pack(side='top', anchor='center', expand=1, ipadx=20, ipady=5)
+        button_run_script.pack(side='top', anchor='center', expand=1)
         label_copyright = tkinter.Label(self.tab_home, font=('bahnschrift', 10), fg='#686565')
         label_copyright['text'] = 'Copyright (C) 2021 Jaime Álvarez Fernández'
         label_copyright.pack(side='bottom', anchor='s')
@@ -118,7 +119,7 @@ class WebCheckGUI(tkinter.Frame):
         line_by_line = self.whats_new_file.open('r', encoding='utf-8').readlines()
         whats_new_window = tkinter.Toplevel(self)
         whats_new_window.title("What's new today?")
-        whats_new_window.wm_iconphoto(False, icon)
+        whats_new_window.wm_iconphoto(False, self.icon)
 
         scroll_whats_new = ScrolledFrame(whats_new_window, width=450, height=250)
         scroll_whats_new.pack(side="top", expand=1, fill="both")
@@ -158,8 +159,8 @@ class WebCheckGUI(tkinter.Frame):
         batch_button.pack(anchor='nw', expand=1, pady=20, padx=10)
         batch_button['command'] = self.add_batch_url
 
-        submit_button = tkinter.Button(self.tab_add_url, text='Submit new url', font=('bahnschrift', 11))
-        submit_button.pack(anchor='center', expand=1, ipadx=50, ipady=5)
+        submit_button = tkinter.Button(self.tab_add_url, text='Submit new url', font=('bahnschrift', 11), width=14)
+        submit_button.pack(anchor='s', expand=1, ipady=2, pady=3)
         submit_button['command'] = self.add_new_url
 
     def add_batch_url(self):
@@ -218,8 +219,8 @@ class WebCheckGUI(tkinter.Frame):
         self.scroll_frame_mod_url.bind_scroll_wheel(self.tab_modify_url)
         self.modify_frame = self.scroll_frame_mod_url.display_widget(tkinter.Frame)
 
-        button_submit = tkinter.Button(self.tab_modify_url, text='Submit', font=('bahnschrift', 11))
-        button_submit.pack(side='bottom', anchor='s', ipadx=31, ipady=5)
+        button_submit = tkinter.Button(self.tab_modify_url, text='Submit', font=('bahnschrift', 11), width=10)
+        button_submit.pack(side='bottom', anchor='s', ipady=3, pady=2)
         button_submit['command'] = self.modify_this_url
 
     def create_radio_button(self):
@@ -255,11 +256,11 @@ class WebCheckGUI(tkinter.Frame):
 
         frame_delete_button = tkinter.Frame(self.tab_delete_url)
         frame_delete_button.pack(side='bottom')
-        submit_button = tkinter.Button(frame_delete_button, text='Delete', font=('bahnschrift', 11))
-        submit_button.grid(row=0, column=1, ipadx=50, ipady=5)
+        submit_button = tkinter.Button(frame_delete_button, text='Delete', font=('bahnschrift', 11), width=10)
+        submit_button.grid(row=0, column=1, ipady=2, pady=3, padx=1)
         submit_button['command'] = self.delete_only
-        submit_button = tkinter.Button(frame_delete_button, text='Delete all', font=('bahnschrift', 11))
-        submit_button.grid(row=0, column=0, ipadx=43, ipady=5)
+        submit_button = tkinter.Button(frame_delete_button, text='Delete all', font=('bahnschrift', 11), width=10)
+        submit_button.grid(row=0, column=0, ipady=2, pady=3, padx=1)
         submit_button['command'] = self.delete_all
 
     def create_check_button(self):
@@ -295,7 +296,7 @@ class WebCheckGUI(tkinter.Frame):
             self.for_delete.remove(order[i])
 
     def create_menu(self):
-        menu = tkinter.Menu(self.master)
+        menu = tkinter.Menu(self)
 
         new_item = tkinter.Menu(menu, tearoff=0)
         new_item.add_command(label='Reset url file', command=self.reset_url_file)
@@ -304,10 +305,10 @@ class WebCheckGUI(tkinter.Frame):
         new_item.add_separator()
         new_item.add_command(label='About', command=self.about_script)
         new_item.add_separator()
-        new_item.add_command(label='Close', command=self.master.destroy)
+        new_item.add_command(label='Close', command=self.destroy)
 
         menu.add_cascade(label='Options', menu=new_item)
-        self.master.config(menu=menu)
+        self.config(menu=menu)
 
     # re-write url_list.txt completely empty
     def reset_url_file(self):
@@ -360,16 +361,17 @@ class WebCheckGUI(tkinter.Frame):
 
     # create a new window with all info about the script
     def about_script(self):
-        new_window = tkinter.Toplevel(self)
+        new_window = tkinter.Toplevel()
         new_window.title('About...')
         new_window.geometry('450x200')
         new_window.resizable(False, False)
-        new_window.wm_iconphoto(False, icon)
+        new_window.wm_iconphoto(False, self.icon)
+        new_window.focus()
         font = ('bahnschrift', 10)
         script = 'Web check'
         contact = 'Contact: jaime.af.git@gmail.com'
         repository = 'Repository: https://github.com/Jaime-alv/web_check.git'
-        version = 'Version: v1.1.0'
+        version = 'Version: v1.2.0'
         license_script = 'License: GPL-3.0-or-later'
         author = 'Author: Jaime Álvarez Fernández'
 
@@ -383,10 +385,8 @@ class WebCheckGUI(tkinter.Frame):
         left_frame = tkinter.Frame(middle_frame)
         left_frame.pack(side='left')
 
-        image = ico.resize((80, 80), Image.ANTIALIAS)
-        img = ImageTk.PhotoImage(image)
-        panel = tkinter.Label(left_frame, image=img)
-        panel.image = img
+        panel = tkinter.Label(left_frame, image=self.icon)
+        panel.image = self.icon
         panel.pack(padx=10)
 
         contact_label = tkinter.Label(right_frame, text=contact, font=font)
@@ -400,23 +400,17 @@ class WebCheckGUI(tkinter.Frame):
         author_label = tkinter.Label(right_frame, text=author, font=font)
         author_label.pack(anchor='w', padx=10, pady=2)
 
-        close_window = tkinter.Button(new_window, text='Ok', font=('bahnschrift', 12), command=new_window.destroy)
-        close_window.pack(pady=4, anchor='s', side='bottom', ipadx=33)
+        close_window = tkinter.Button(new_window, text='Ok', font=('bahnschrift', 12), width=6, fg='red',
+                                      command=new_window.destroy)
+        close_window.pack(pady=4, anchor='s', side='bottom')
 
 
 if __name__ == "__main__":
     directory = '..\\storage'
     try:
-        logging.basicConfig(filename=f'{directory}\\logs\\log.txt', level=logging.DEBUG,
+        logging.basicConfig(filename=pathlib.Path(f'{directory}\\logs\\log.txt'), level=logging.DEBUG,
                             format='%(asctime)s - %(levelname)s - %(message)s')
         pathlib.Path(f'{directory}\\logs\\log.txt').open('w')
     except FileNotFoundError:
         create_folder(directory)
-    pil_logger = logging.getLogger('PIL')
-    pil_logger.setLevel(logging.INFO)
-    window = tkinter.Tk()
-    app = WebCheckGUI(window, directory)
-    ico = Image.open('../image/icon_bw.png')
-    icon = ImageTk.PhotoImage(ico)
-    window.wm_iconphoto(False, icon)
-    app.mainloop()
+    WebCheckGUI(directory).mainloop()
