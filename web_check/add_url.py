@@ -142,7 +142,7 @@ def create_folder(root):
 
 if __name__ == "__main__":
     try:
-        logging.basicConfig(filename='../storage/logs/log.txt', level=logging.DEBUG,
+        logging.basicConfig(filename=pathlib.Path('../storage/logs/log.txt'), level=logging.DEBUG,
                             format='%(levelname)s - %(message)s')
         with pathlib.Path(f'../storage/url_list.txt').open('r') as json_file:
             stored_url = json.load(json_file)

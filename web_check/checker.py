@@ -42,7 +42,7 @@ class CompareUrl:
             self.css_selector = self.list_of_saved_url[each_url]['css_selector']
             self.charset = self.list_of_saved_url[each_url]['encoding']
             self.url = each_url
-            self.path = f'{self.root}\\url_data\\{self.file_name}.txt'
+            self.path = pathlib.Path(f'{self.root}\\url_data\\{self.file_name}.txt')
             logging.info(f'url = {self.url}')
             logging.info(f'file_name = {self.file_name}')
             logging.info(f'selector = {self.css_selector}')
@@ -65,7 +65,7 @@ class CompareUrl:
                 temp_file.write(chunk)
             temp_file.close()
 
-        compare_files = filecmp.cmp(f'{self.root}\\url_data\\temp.txt', self.path, shallow=False)
+        compare_files = filecmp.cmp(pathlib.Path(f'{self.root}\\url_data\\temp.txt'), self.path, shallow=False)
         if compare_files:
             logging.warning(f"{self.url} Equal to stored one")
         elif not compare_files:
@@ -89,7 +89,7 @@ class CompareUrl:
     # update stored file with new text and create backup with old text
     def save_url(self):
         logging.warning(f'Updating file with {self.url} in {self.path}')
-        shutil.move(self.path, f'{self.root}\\url_data\\backup\\{self.file_name}_backup.txt')
+        shutil.move(self.path, pathlib.Path(f'{self.root}\\url_data\\backup\\{self.file_name}_backup.txt'))
         backup = pathlib.Path(f'{self.root}\\url_data\\backup\\{self.file_name}_backup.txt').open('r')
         backup.close()
 
@@ -112,7 +112,7 @@ class CompareUrl:
 if __name__ == "__main__":
     directory = '..\\storage'
     try:
-        logging.basicConfig(filename=f'{directory}\\logs\\log.txt', level=logging.DEBUG,
+        logging.basicConfig(filename=pathlib.Path(f'{directory}\\logs\\log.txt'), level=logging.DEBUG,
                             format='%(asctime)s - %(levelname)s - %(message)s')
         pathlib.Path('../storage/logs/log.txt').open('w')
         with pathlib.Path(f'{directory}\\url_list.txt').open('r') as file:
