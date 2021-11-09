@@ -20,7 +20,6 @@ import tkinter
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
-from PIL import ImageTk, Image
 from checker import CompareUrl
 from add_url import *
 from tkscrolledframe import ScrolledFrame
@@ -73,9 +72,8 @@ class WebCheckGUI(tkinter.Frame):
 
     # create home tab
     def home(self):
-        image = Image.open('../image/logo_new.png')
-        image = image.resize((350, 200), Image.ANTIALIAS)
-        img = ImageTk.PhotoImage(image)
+        background_image = pathlib.Path('../image/logo.png')
+        img = tkinter.PhotoImage(file=background_image)
         panel = tkinter.Label(self.tab_home, image=img)
         panel.image = img
         panel.pack(pady=20)
@@ -383,8 +381,7 @@ class WebCheckGUI(tkinter.Frame):
         left_frame = tkinter.Frame(middle_frame)
         left_frame.pack(side='left')
 
-        image = ico.resize((80, 80), Image.ANTIALIAS)
-        img = ImageTk.PhotoImage(image)
+        img = tkinter.PhotoImage(file=icon_file)
         panel = tkinter.Label(left_frame, image=img)
         panel.image = img
         panel.pack(padx=10)
@@ -407,7 +404,7 @@ class WebCheckGUI(tkinter.Frame):
 if __name__ == "__main__":
     directory = '..\\storage'
     try:
-        logging.basicConfig(filename=f'{directory}\\logs\\log.txt', level=logging.DEBUG,
+        logging.basicConfig(filename=pathlib.Path(f'{directory}\\logs\\log.txt'), level=logging.DEBUG,
                             format='%(asctime)s - %(levelname)s - %(message)s')
         pathlib.Path(f'{directory}\\logs\\log.txt').open('w')
     except FileNotFoundError:
@@ -416,7 +413,7 @@ if __name__ == "__main__":
     pil_logger.setLevel(logging.INFO)
     window = tkinter.Tk()
     app = WebCheckGUI(window, directory)
-    ico = Image.open('../image/icon_bw.png')
-    icon = ImageTk.PhotoImage(ico)
+    icon_file = pathlib.Path('../image/icon_bw.png')
+    icon = tkinter.PhotoImage(file=icon_file)
     window.wm_iconphoto(False, icon)
     app.mainloop()
