@@ -120,6 +120,7 @@ class WebCheckGUI(tkinter.Tk):
         whats_new_window = tkinter.Toplevel(self)
         whats_new_window.title("What's new today?")
         whats_new_window.wm_iconphoto(False, self.icon)
+        whats_new_window.focus()
 
         scroll_whats_new = ScrolledFrame(whats_new_window, width=450, height=250)
         scroll_whats_new.pack(side="top", expand=1, fill="both")
